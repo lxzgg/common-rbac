@@ -1,0 +1,22 @@
+{
+  "name": "nest-learn",
+  "version": "1.0.0",
+  "main": "./src/main.ts",
+  "repository": "https://github.com/lxzgg/nest-learn.git",
+  "author": "lxzgg <471227142@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --no-notify ./src/main.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^5.3.7",
+    "@nestjs/core": "^5.3.7",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.9.4",
+    "ts-node-dev": "^1.0.0-pre.30",
+    "typescript": "^3.0.3"
+  }
+}
