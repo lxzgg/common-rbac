@@ -10,6 +10,7 @@ import {PermissionGuard} from './common/guard/permission.guard'
 
   // 全局拦截器
   app.useGlobalInterceptors(new MsInterceptor())
+  // 全局守卫
   app.useGlobalGuards(new PermissionGuard())
 
   await app.listen(3000).then(() => {

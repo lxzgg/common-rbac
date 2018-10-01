@@ -1,38 +1,29 @@
 import {Body, Controller, FilesInterceptor, Get, Post, UploadedFiles, UseInterceptors} from '@nestjs/common'
 import {UserService} from '../service/user.service'
-import {Repository} from 'typeorm'
-import {InjectRepository} from '@nestjs/typeorm'
-import {User} from '../entity/user.entity'
 import {writeFileSync} from 'fs'
 import {Permission} from '../common/decorator/permission.decorator'
 import {Resource} from '../common/decorator/resource.decorator'
 import {success} from '../utils/result.util'
 
-@Resource({name: 'Resource', identify: 'Resource'})
+@Resource({name: '用户', identify: 'Resource'})
 @Controller()
 export class UserController {
 
-  constructor(
-    @InjectRepository(User)
-    private readonly adminRepository: Repository<User>,
-    private readonly userService: UserService,
-  ) {
+  constructor(private readonly userService: UserService) {
   }
 
   @Get()
-  @Permission({name: 'text', identify: 'text432', action: 'create'})
+  @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text() {
-    return 16661
+    return 666
   }
 
-  @Permission({name: 'Permission', identify: 'Permission33', action: 'create'})
   @Post('addUser')
   async addUser(@Body() body) {
     const result = await this.userService.addUser(body)
     return success(result)
   }
 
-  @Permission({name: 'Permission', identify: 'Permission14', action: 'find'})
   @Post('getUser')
   async getUser() {
     const result = await this.userService.getUser()
