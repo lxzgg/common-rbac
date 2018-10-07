@@ -1,6 +1,6 @@
 const regex = /(YYYY|YY|MM|M|DD|D|HH|H|mm|m|ss|s|ms)/
 
-function _getTimestamp(date?, pattern?, useUTC?) {
+function getTimestamp(date, pattern, useUTC) {
   if (typeof date === 'string' && !/\d/.test(date)) {
     pattern = date
     date = undefined
@@ -14,23 +14,23 @@ function _getTimestamp(date?, pattern?, useUTC?) {
 
   pattern = pattern || 'YYYY-MM-DD'
 
-  function timestamp() {
-    let match = regex.exec(pattern)
-    if (match) {
-      let increment = method(match[1], useUTC)
-      let val = ''
-      if (!increment[1]) {
-        val = String(date[increment[0]]() + (increment[2] || 0))
-      } else {
-        val = '00' + (date[increment[0]]() + (increment[2] || 0))
-        val = val.slice(-increment[1])
-      }
-      pattern = pattern.replace(match[0], val)
-      timestamp()
-    }
-  }
+  return timestamp(date, pattern, useUTC)
+}
 
-  timestamp()
+function timestamp(date, pattern, useUTC) {
+  let match = regex.exec(pattern)
+  if (match) {
+    let increment = method(match[1], useUTC)
+    let val = ''
+    if (!increment[1]) {
+      val = String(date[increment[0]]() + (increment[2] || 0))
+    } else {
+      val = '00' + (date[increment[0]]() + (increment[2] || 0))
+      val = val.slice(-increment[1])
+    }
+    pattern = pattern.replace(match[0], val)
+    pattern = timestamp(date, pattern, useUTC)
+  }
   return pattern
 }
 
@@ -52,12 +52,10 @@ function method(key, useUTC) {
   })[key]
 }
 
-function DateFormat(date?, pattern?) {
-  return _getTimestamp(date, pattern, false)
+export function DateFormat(date?, pattern?) {
+  return getTimestamp(date, pattern, false)
 }
 
-function DateFormatUTC(date?, pattern?) {
-  return _getTimestamp(date, pattern, true)
+export function DateFormatUTC(date?, pattern?) {
+  return getTimestamp(date, pattern, true)
 }
-
-export {DateFormat, DateFormatUTC}

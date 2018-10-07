@@ -1,6 +1,7 @@
 import {Connection, createConnection} from 'typeorm'
 import {User} from '../src/entity/user.entity'
 import {Role} from '../src/entity/role.entity'
+import {DateFormat} from '../src/utils/date.util'
 
 describe('test', () => {
   let connection: Connection

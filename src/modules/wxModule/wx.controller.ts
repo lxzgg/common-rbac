@@ -1,6 +1,6 @@
 import {BadRequestException, Body, Controller, Post, Req} from '@nestjs/common'
-import {WxService} from '../service/wx.service'
-import {closeOrderSchema, getOrderSchema, paySchema, refundQuerySchema, refundSchema} from '../schema/wx.schema'
+import {WxService} from './wx.service'
+import {closeOrderSchema, getOrderSchema, paySchema, refundQuerySchema, refundSchema} from './wx.schema'
 
 @Controller('wx')
 export class WxController {

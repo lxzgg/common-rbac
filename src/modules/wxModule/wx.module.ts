@@ -1,6 +1,6 @@
 import {HttpModule, Module} from '@nestjs/common'
-import {WxController} from './controller/wx.controller'
-import {WxService} from './service/wx.service'
+import {WxController} from './wx.controller'
+import {WxService} from './wx.service'
 
 @Module({
   imports: [HttpModule],

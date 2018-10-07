@@ -1,8 +1,8 @@
-import {Body, Controller, FilesInterceptor, Get, Post, UploadedFiles, UseInterceptors} from '@nestjs/common'
+import {Body, Controller, FilesInterceptor, Get, Post, Req, UploadedFiles, UseInterceptors} from '@nestjs/common'
 import {UserService} from '../service/user.service'
 import {writeFileSync} from 'fs'
-import {Permission} from '../common/decorator/permission.decorator'
-import {Resource} from '../common/decorator/resource.decorator'
+import {Permission} from '../modules/authModule/decorator/permission.decorator'
+import {Resource} from '../modules/authModule/decorator/resource.decorator'
 import {success} from '../utils/result.util'
 
 @Resource({name: '用户', identify: 'Resource'})
@@ -16,6 +16,12 @@ export class UserController {
   @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text() {
     return 666
+  }
+
+  @Get('admin')
+  text1(@Req() req) {
+    console.log(req.user)
+    return 888
   }
 
   @Post('addUser')

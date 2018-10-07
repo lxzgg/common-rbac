@@ -1,5 +1,5 @@
 import {BadRequestException, HttpService, Injectable} from '@nestjs/common'
-import {WxConfig} from '../config/wx.config'
+import {WxConfig} from './wx.config'
 import {createDecipheriv, createHash} from 'crypto'
 import {Builder, Parser} from 'xml2js'
 import {stringify} from 'qs'
