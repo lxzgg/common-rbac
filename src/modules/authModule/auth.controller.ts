@@ -8,7 +8,7 @@ export class AuthController {
 
   @Get('getToken')
   createToken() {
-    return this.authService.createToken()
+    return this.authService.createToken({id: 1})
   }
 
 }

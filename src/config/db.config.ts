@@ -12,8 +12,8 @@ export const DBConfig: TypeOrmModuleOptions = {
     'entity/**.entity{.ts,.js}',
   ],
   // 每次建立连接时删除架构
-  dropSchema: false,
+  dropSchema: true,
   // 每次启动应用程序时自动创建数据库架构
-  synchronize: false,
+  synchronize: true,
   logging: true,
 }

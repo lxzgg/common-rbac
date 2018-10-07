@@ -10,6 +10,7 @@ import {PERMISSION_DEFINITION} from './decorator/permission.decorator'
 import {APP_GUARD} from '@nestjs/core'
 import {AuthGuard} from './auth.guard'
 import {AuthController} from './auth.controller'
+import {User} from '../../entity/user.entity'
 
 @Module({
   controllers: [
@@ -34,6 +35,7 @@ export class AuthModule implements OnModuleInit {
 
   async onModuleInit() {
     await this.loadResourcesAndPermissions()
+    await this.createSuperAdmin()
   }
 
   /**
@@ -112,5 +114,15 @@ export class AuthModule implements OnModuleInit {
       // 完善元数据信息,守卫拦截时可以查看ID和所属资源
       permissions.forEach(permission => permission.id = existPermissions.find(v => v.identify === permission.identify).id)
     })
+  }
+
+  /**
+   * 创建超级管理员
+   */
+  private async createSuperAdmin() {
+    const userRepository = this.connection.getRepository(User)
+    const superAdmin = await userRepository.findOne(1)
+    if (superAdmin) return
+    await userRepository.save({id: 1, username: 'admin', password: 'admin'})
   }
 }

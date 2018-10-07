@@ -15,7 +15,7 @@ export class UserController {
   @Get()
   @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text() {
-    return 666
+    return {code: 0}
   }
 
   @Get('admin')

@@ -1,5 +1,14 @@
-import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 import {Role} from './role.entity'
+import {DateFormat} from '../utils/date.util'
 
 @Entity()
 export class User {
@@ -7,13 +16,41 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({default: '', comment: '姓名'})
+  @Column({length: 50, default: '', comment: '姓名'})
   name: string
 
-  @Column('tinyint', {width: 1, default: true, comment: '封禁状态 1.有效 0:无效'})
-  status: number
+  @Column({length: 50, nullable: true, unique: true, comment: '账号'})
+  username: string
+
+  @Column({length: 50, nullable: true, comment: '密码'})
+  password: string
+
+  @Column({length: 50, nullable: true, unique: true, comment: '手机'})
+  mobile: string
+
+  @Column({length: 50, nullable: true, unique: true, comment: '邮箱'})
+  email: string
+
+  @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
+  status: boolean
 
   @ManyToMany(() => Role)
   @JoinTable({name: 'user_role'})
   role: Role[]
+
+  @CreateDateColumn({
+    select: false, comment: '创建时间', transformer: {
+      from: (date: Date) => DateFormat(date, 'YYYY-MM-DD HH:mm:ss'),
+      to: () => new Date(),
+    },
+  })
+  createdAt: Date
+
+  @UpdateDateColumn({
+    select: false, comment: '更新时间', transformer: {
+      from: (date: Date) => DateFormat(date, 'YYYY-MM-DD HH:mm:ss'),
+      to: () => new Date(),
+    },
+  })
+  updatedAt: Date
 }

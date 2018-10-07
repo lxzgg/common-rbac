@@ -1,21 +1,37 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
 import {Resource} from './resource.entity'
+import {DateFormat} from '../utils/date.util'
 
 @Entity()
 export class Permission {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({default: '', comment: '权限名称,如:添加用户'})
+  @Column({length: 50, default: '', comment: '权限名称,如:添加用户'})
   name: string
 
-  @Column({comment: '权限操作类型:create、delete、update、find'})
+  @Column({length: 50, comment: '权限操作类型:create、delete、update、find'})
   action: string
 
-  @Column({unique: true, nullable: false, comment: '权限唯一标识,如:用户管理=>user:createUser'})
+  @Column({length: 50, unique: true, nullable: false, comment: '权限唯一标识,如:用户管理=>user:createUser'})
   identify: string
 
-  @ManyToOne(() => Resource, resource => resource.permission, {onDelete: 'CASCADE'})
+  @ManyToOne(() => Resource, resource => resource.permission, {nullable: false, onDelete: 'CASCADE'})
   resource: Resource
 
+  @CreateDateColumn({
+    select: false, comment: '创建时间', transformer: {
+      from: (date: Date) => DateFormat(date, 'YYYY-MM-DD HH:mm:ss'),
+      to: () => new Date(),
+    },
+  })
+  createdAt: Date
+
+  @UpdateDateColumn({
+    select: false, comment: '更新时间', transformer: {
+      from: (date: Date) => DateFormat(date, 'YYYY-MM-DD HH:mm:ss'),
+      to: () => new Date(),
+    },
+  })
+  updatedAt: Date
 }

@@ -15,8 +15,12 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({default: '', comment: '角色名'})
+  @Column({length: 50, default: '', comment: '角色名'})
   name: string
+
+  @ManyToMany(type => Permission)
+  @JoinTable({name: 'role_permission'})
+  Permission: Permission
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {
@@ -33,8 +37,4 @@ export class Role {
     },
   })
   updatedAt: Date
-
-  @ManyToMany(type => Permission)
-  @JoinTable({name: 'role_permission'})
-  Permission: Permission
 }
