@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,7 +12,7 @@ import {Resource} from './auth_resource.entity'
 import {DateFormat} from '../utils/date.util'
 import {Role} from './auth_role.entity'
 
-@Entity()
+@Entity('auth_permission')
 export class Permission {
   @PrimaryGeneratedColumn()
   id: number
@@ -41,6 +42,7 @@ export class Permission {
   role: Role[]
 
   @ManyToOne(() => Resource, resource => resource.permission, {nullable: false, onDelete: 'CASCADE'})
+  @JoinColumn({name: 'resource_id'})
   resource: Resource
 
   @CreateDateColumn({

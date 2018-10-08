@@ -1,36 +1,17 @@
 import {Injectable} from '@nestjs/common'
+import {Repository} from 'typeorm'
 import {User} from '../entity/auth_user.entity'
-import {UserRepository} from '../repository/user.repository'
 import {InjectRepository} from '@nestjs/typeorm'
 
 @Injectable()
 export class UserService {
 
-  constructor(
-    @InjectRepository(UserRepository)
-    private readonly userRepository: UserRepository,
-  ) {
+  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {
   }
 
-  async addUser(param) {
-    const user = new User()
-    user.name = param.name
-    return await this.userRepository.save(user)
-  }
-
-  async getUser() {
-    return await this.userRepository.find()
-  }
-
-  async updateUser(param) {
-    const user = new User()
-    user.name = param.name
-
-    return await this.userRepository.update({id: param.id}, user)
-  }
-
-  async delUser(param) {
-    return await this.userRepository.delete({id: param.id})
+  // 查询所有用户
+  findAll() {
+    return this.userRepository.find()
   }
 
 }

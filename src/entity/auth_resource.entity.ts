@@ -2,7 +2,7 @@ import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Upd
 import {Permission} from './auth_permission.entity'
 import {DateFormat} from '../utils/date.util'
 
-@Entity()
+@Entity('auth_resource')
 export class Resource {
   @PrimaryGeneratedColumn()
   id: number

@@ -9,8 +9,9 @@ import {
 } from 'typeorm'
 import {Role} from './auth_role.entity'
 import {DateFormat} from '../utils/date.util'
+import {Organization} from './auth_organization.entity'
 
-@Entity()
+@Entity('auth_user')
 export class User {
 
   @PrimaryGeneratedColumn()
@@ -31,7 +32,7 @@ export class User {
   username: string
 
   @Column({
-    length: 50,
+    length: 60,
     default: '',
     comment: '密码',
   })
@@ -61,8 +62,15 @@ export class User {
   status: boolean
 
   @ManyToMany(() => Role, role => role.user)
-  @JoinTable({name: 'user_role'})
+  @JoinTable({
+    name: 'auth_user_role',
+    joinColumn: {name: 'user_id'},
+    inverseJoinColumn: {name: 'role_id'},
+  })
   role: Role[]
+
+  @ManyToMany(() => Organization, organization => organization.user)
+  organization: Organization[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {

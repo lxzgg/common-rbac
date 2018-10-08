@@ -7,36 +7,38 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import {Permission} from './auth_permission.entity'
+import {Role} from './auth_role.entity'
 import {DateFormat} from '../utils/date.util'
 import {User} from './auth_user.entity'
-import {Organization} from './auth_organization.entity'
 
-@Entity('auth_role')
-export class Role {
+@Entity('auth_organization')
+export class Organization {
+
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({
     length: 50,
     default: '',
-    comment: '角色名',
+    comment: '用户组名称',
   })
   name: string
 
-  @ManyToMany(() => User, user => user.role)
+  @ManyToMany(() => User, user => user.organization)
+  @JoinTable({
+    name: 'auth_organization_user',
+    joinColumn: {name: 'organization_id'},
+    inverseJoinColumn: {name: 'user_id'},
+  })
   user: User[]
 
-  @ManyToMany(() => Permission, permission => permission.role)
+  @ManyToMany(() => Role, role => role.organization)
   @JoinTable({
-    name: 'auth_role_permission',
-    joinColumn: {name: 'role_id'},
-    inverseJoinColumn: {name: 'permission_id'},
+    name: 'auth_organization_role',
+    joinColumn: {name: 'organization_id'},
+    inverseJoinColumn: {name: 'role_id'},
   })
-  permission: Permission[]
-
-  @ManyToMany(() => Organization, organization => organization.role)
-  organization: Organization[]
+  role: Role[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {
@@ -53,4 +55,5 @@ export class Role {
     },
   })
   updatedAt: Date
+
 }

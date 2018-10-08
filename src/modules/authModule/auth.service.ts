@@ -25,7 +25,7 @@ export class AuthService {
     }
   }
 
-  // 查询用户拥有权限
+  // 查询用户拥有的权限
   async findUserPermission(userId) {
     return await this.connection.getRepository(User).findOne(userId, {
       select: ['id'],

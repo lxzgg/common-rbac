@@ -13,6 +13,7 @@ import {AuthController} from './auth.controller'
 import {User} from '../../entity/auth_user.entity'
 import {Role} from '../../entity/auth_role.entity'
 import {AuthInterceptor} from './auth.interceptor'
+import {hashSync} from 'bcryptjs'
 
 @Module({
   controllers: [
@@ -140,7 +141,7 @@ export class AuthModule implements OnModuleInit {
     const userRepository = this.connection.getRepository(User)
     const superAdmin = await userRepository.findOne(1)
     if (superAdmin) return
-    await userRepository.save({id: 1, username: 'admin', password: 'admin'})
+    await userRepository.save({id: 1, username: 'admin', password: hashSync('admin')})
   }
 
 }
