@@ -7,36 +7,24 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import {Role} from './role.entity'
+import {Permission} from './auth_permission.entity'
 import {DateFormat} from '../utils/date.util'
+import {User} from './auth_user.entity'
 
 @Entity()
-export class User {
-
+export class Role {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '姓名'})
+  @Column({length: 50, default: '', comment: '角色名'})
   name: string
 
-  @Column({length: 50, nullable: true, unique: true, comment: '账号'})
-  username: string
+  @ManyToMany(() => User, user => user.role)
+  user: User[]
 
-  @Column({length: 50, nullable: true, comment: '密码'})
-  password: string
-
-  @Column({length: 50, nullable: true, unique: true, comment: '手机'})
-  mobile: string
-
-  @Column({length: 50, nullable: true, unique: true, comment: '邮箱'})
-  email: string
-
-  @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
-  status: boolean
-
-  @ManyToMany(() => Role)
-  @JoinTable({name: 'user_role'})
-  role: Role[]
+  @ManyToMany(() => Permission, permission => permission.role)
+  @JoinTable({name: 'role_permission'})
+  permission: Permission[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {

@@ -1,5 +1,5 @@
 import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
-import {Permission} from './permission.entity'
+import {Permission} from './auth_permission.entity'
 import {DateFormat} from '../utils/date.util'
 
 @Entity()

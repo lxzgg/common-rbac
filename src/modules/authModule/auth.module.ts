@@ -3,14 +3,15 @@ import {AuthService} from './auth.service'
 import {MetadataScanner} from '@nestjs/core/metadata-scanner'
 import {Connection, In, Not} from 'typeorm'
 import {ModulesContainer} from '@nestjs/core/injector'
-import {Resource} from '../../entity/resource.entity'
-import {Permission} from '../../entity/permission.entity'
+import {Resource} from '../../entity/auth_resource.entity'
+import {Permission} from '../../entity/auth_permission.entity'
 import {RESOURCE_DEFINITION} from './decorator/resource.decorator'
 import {PERMISSION_DEFINITION} from './decorator/permission.decorator'
 import {APP_GUARD} from '@nestjs/core'
 import {AuthGuard} from './auth.guard'
 import {AuthController} from './auth.controller'
-import {User} from '../../entity/user.entity'
+import {User} from '../../entity/auth_user.entity'
+import {Role} from '../../entity/auth_role.entity'
 
 @Module({
   controllers: [
@@ -35,6 +36,7 @@ export class AuthModule implements OnModuleInit {
 
   async onModuleInit() {
     await this.loadResourcesAndPermissions()
+    await this.createDefaultRole()
     await this.createSuperAdmin()
   }
 
@@ -117,6 +119,16 @@ export class AuthModule implements OnModuleInit {
   }
 
   /**
+   * 创建默认角色
+   */
+  private async createDefaultRole() {
+    const roleRepository = this.connection.getRepository(Role)
+    const role = await roleRepository.findOne(1)
+    if (role) return
+    await roleRepository.save({id: 1, name: 'admin'})
+  }
+
+  /**
    * 创建超级管理员
    */
   private async createSuperAdmin() {
@@ -125,4 +137,5 @@ export class AuthModule implements OnModuleInit {
     if (superAdmin) return
     await userRepository.save({id: 1, username: 'admin', password: 'admin'})
   }
+
 }

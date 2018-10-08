@@ -13,16 +13,23 @@ export class UserController {
   }
 
   @Get()
-  @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text() {
     return {code: 0}
   }
 
   @Get('admin')
+  @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text1(@Req() req) {
     console.log(req.user)
     return 888
   }
+
+  @Post('admin')
+  text2(@Req() req) {
+    console.log(req.user)
+    return {code: 0}
+  }
+
 
   @Post('addUser')
   async addUser(@Body() body) {

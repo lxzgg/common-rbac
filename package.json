@@ -7,7 +7,6 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --no-notify ./src/main.ts",
-    "dev:wx": "ts-node-dev --no-notify ./src/modules/wxModule/wx.main.ts",
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist coverage temp",
     "test": "rimraf coverage && jest --notify --silent --coverage"

@@ -2,25 +2,34 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import {Permission} from './permission.entity'
+import {Resource} from './auth_resource.entity'
 import {DateFormat} from '../utils/date.util'
+import {Role} from './auth_role.entity'
 
 @Entity()
-export class Role {
+export class Permission {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '角色名'})
+  @Column({length: 50, default: '', comment: '权限名称,如:添加用户'})
   name: string
 
-  @ManyToMany(type => Permission)
-  @JoinTable({name: 'role_permission'})
-  Permission: Permission
+  @Column({length: 50, comment: '权限操作类型:create、delete、update、find'})
+  action: string
+
+  @Column({length: 50, unique: true, nullable: false, comment: '权限唯一标识,如:用户管理=>user:createUser'})
+  identify: string
+
+  @ManyToMany(() => Role, role => role.permission)
+  role: Role[]
+
+  @ManyToOne(() => Resource, resource => resource.permission, {nullable: false, onDelete: 'CASCADE'})
+  resource: Resource
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {
