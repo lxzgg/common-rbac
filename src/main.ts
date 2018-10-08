@@ -10,7 +10,7 @@ import {MsInterceptor} from './common/interceptor/ms.interceptor'
   // 全局拦截器
   app.useGlobalInterceptors(new MsInterceptor())
 
-  await app.listen(3000).then(() => {
+  await app.listen(3000, '0.0.0.0').then(() => {
     // 启动生成临时目录
     FileUtil.mkdirSync('temp')
   })

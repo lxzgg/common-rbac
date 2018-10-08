@@ -16,13 +16,25 @@ export class Permission {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '权限名称,如:添加用户'})
+  @Column({
+    length: 50,
+    default: '',
+    comment: '权限名称,如:添加用户',
+  })
   name: string
 
-  @Column({length: 50, comment: '权限操作类型:create、delete、update、find'})
+  @Column({
+    length: 50,
+    comment: '权限操作类型:create、delete、update、find',
+  })
   action: string
 
-  @Column({length: 50, unique: true, nullable: false, comment: '权限唯一标识,如:用户管理=>user:createUser'})
+  @Column({
+    length: 50,
+    unique: true,
+    nullable: false,
+    comment: '权限唯一标识,如:用户管理=>user:createUser',
+  })
   identify: string
 
   @ManyToMany(() => Role, role => role.permission)

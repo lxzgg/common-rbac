@@ -35,7 +35,7 @@ function timestamp(date, pattern, useUTC) {
 }
 
 function method(key, useUTC) {
-  return ({
+  return {
     YYYY: [useUTC ? 'getUTCFullYear' : 'getFullYear', 4],
     YY: [useUTC ? 'getUTCFullYear' : 'getFullYear', 2],
     MM: [useUTC ? 'getUTCMonth' : 'getMonth', 2, 1],
@@ -49,7 +49,7 @@ function method(key, useUTC) {
     ss: [useUTC ? 'getUTCSeconds' : 'getSeconds', 2],
     s: [useUTC ? 'getUTCSeconds' : 'getSeconds', false],
     ms: [useUTC ? 'getUTCMilliseconds' : 'getMilliseconds', 3],
-  })[key]
+  }[key]
 }
 
 export function DateFormat(date?, pattern?) {

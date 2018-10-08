@@ -20,8 +20,7 @@ export class UserController {
   @Get('admin')
   @Permission({name: 'text1', identify: 'Permission', action: 'create'})
   text1(@Req() req) {
-    console.log(req.user)
-    return 888
+    return {code: 888}
   }
 
   @Post('admin')

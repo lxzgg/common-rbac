@@ -1,14 +1,16 @@
 import {Controller, Get} from '@nestjs/common'
 import {AuthService} from './auth.service'
 
-@Controller()
+@Controller('auth')
 export class AuthController {
+
   constructor(private readonly authService: AuthService) {
   }
 
   @Get('getToken')
   createToken() {
-    return this.authService.createToken({id: 1})
+    const token = this.authService.createToken({id: 1})
+    return {code: 0, message: 'success', token}
   }
 
 }

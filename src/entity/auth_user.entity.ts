@@ -16,22 +16,48 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '姓名'})
+  @Column({
+    length: 50,
+    default: '',
+    comment: '姓名',
+  })
   name: string
 
-  @Column({length: 50, default: '', unique: true, comment: '账号'})
+  @Column({
+    length: 50,
+    default: '', unique: true,
+    comment: '账号',
+  })
   username: string
 
-  @Column({length: 50, default: '', comment: '密码'})
+  @Column({
+    length: 50,
+    default: '',
+    comment: '密码',
+  })
   password: string
 
-  @Column({length: 50, default: '', unique: true, comment: '手机'})
+  @Column({
+    length: 50,
+    default: '',
+    unique: true,
+    comment: '手机',
+  })
   mobile: string
 
-  @Column({length: 50, default: '', unique: true, comment: '邮箱'})
+  @Column({
+    length: 50,
+    default: '',
+    unique: true,
+    comment: '邮箱',
+  })
   email: string
 
-  @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
+  @Column({
+    default: true,
+    width: 1,
+    comment: '封禁状态 1.有效 0:无效',
+  })
   status: boolean
 
   @ManyToMany(() => Role, role => role.user)

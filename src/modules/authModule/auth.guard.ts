@@ -16,9 +16,11 @@ export class AuthGuard implements CanActivate {
     if (!permission) return true
 
     const token = request.headers.authorization
-    if (!token) throw new ForbiddenException('Token Is Null')
+    if (!token) throw new ForbiddenException('Token is null')
 
     const payload: any = this.authService.verifyToken(token)
+    request.payload = payload
+
     //超级管理员不用权限验证
     if (payload.id === 1) return true
 

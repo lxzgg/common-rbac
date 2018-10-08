@@ -7,11 +7,12 @@ import {Resource} from '../../entity/auth_resource.entity'
 import {Permission} from '../../entity/auth_permission.entity'
 import {RESOURCE_DEFINITION} from './decorator/resource.decorator'
 import {PERMISSION_DEFINITION} from './decorator/permission.decorator'
-import {APP_GUARD} from '@nestjs/core'
+import {APP_GUARD, APP_INTERCEPTOR} from '@nestjs/core'
 import {AuthGuard} from './auth.guard'
 import {AuthController} from './auth.controller'
 import {User} from '../../entity/auth_user.entity'
 import {Role} from '../../entity/auth_role.entity'
+import {AuthInterceptor} from './auth.interceptor'
 
 @Module({
   controllers: [
@@ -21,6 +22,10 @@ import {Role} from '../../entity/auth_role.entity'
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuthInterceptor,
     },
     AuthService,
   ],

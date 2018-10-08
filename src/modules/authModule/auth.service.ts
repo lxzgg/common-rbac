@@ -10,10 +10,12 @@ export class AuthService {
   constructor(private readonly connection: Connection) {
   }
 
+  // 生成token
   createToken(payload) {
     return sign(payload, AuthConfig.secret, {expiresIn: AuthConfig.expiresIn})
   }
 
+  // 验证token
   verifyToken(token: string) {
     try {
       token = token.includes('Bearer ') ? token.substring(7) : token
@@ -23,6 +25,7 @@ export class AuthService {
     }
   }
 
+  // 查询用户拥有权限
   async findUserPermission(userId) {
     return await this.connection.getRepository(User).findOne(userId, {
       select: ['id'],
