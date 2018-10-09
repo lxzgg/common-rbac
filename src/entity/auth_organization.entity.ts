@@ -20,6 +20,7 @@ export class Organization {
   @Column({
     length: 50,
     default: '',
+    select: false,
     comment: '用户组名称',
   })
   name: string

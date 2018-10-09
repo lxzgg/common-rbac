@@ -20,12 +20,14 @@ export class Permission {
   @Column({
     length: 50,
     default: '',
+    select: false,
     comment: '权限名称,如:添加用户',
   })
   name: string
 
   @Column({
     length: 50,
+    select: false,
     comment: '权限操作类型:create、delete、update、find',
   })
   action: string

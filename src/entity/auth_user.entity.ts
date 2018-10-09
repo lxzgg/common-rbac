@@ -34,6 +34,7 @@ export class User {
   @Column({
     length: 60,
     default: '',
+    select: false,
     comment: '密码',
   })
   password: string

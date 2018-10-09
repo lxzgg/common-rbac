@@ -10,6 +10,7 @@ export class Resource {
   @Column({
     length: 50,
     default: '',
+    select: false,
     comment: '资源名称,如:用户管理',
   })
   name: string

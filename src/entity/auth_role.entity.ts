@@ -20,6 +20,7 @@ export class Role {
   @Column({
     length: 50,
     default: '',
+    select: false,
     comment: '角色名',
   })
   name: string

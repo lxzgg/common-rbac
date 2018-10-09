@@ -1,5 +1,6 @@
 import {Connection, createConnection} from 'typeorm'
 import {User} from '../src/entity/auth_user.entity'
+import {Role} from '../src/entity/auth_role.entity'
 
 describe('test', () => {
   let connection: Connection
@@ -28,11 +29,26 @@ describe('test', () => {
     await connection.close()
   })
 
+  it('should role', async () => {
+    const result = await connection.getRepository(Role).find({select: ['name']})
+    console.log(JSON.stringify(result, null, 2))
+  })
+
   it('should find', async () => {
     const result = await connection.getRepository(User).findOne(1, {
       select: ['id'],
       relations: ['role', 'role.permission'],
     })
+    console.log(JSON.stringify(result, null, 2))
+  })
+
+  it('should leftJoinAndSelect', async () => {
+    const result = await connection.getRepository(User)
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .addSelect('user.password', 'user_password')
+      .addSelect('role.name', 'role_name')
+      .getRawMany()
     console.log(JSON.stringify(result, null, 2))
   })
 
