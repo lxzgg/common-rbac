@@ -1,4 +1,4 @@
-import {Controller, Post} from '@nestjs/common'
+import {Body, Controller, FileInterceptor, Post, UseInterceptors} from '@nestjs/common'
 import {Permission} from '../modules/authModule/decorator/permission.decorator'
 import {Resource} from '../modules/authModule/decorator/resource.decorator'
 import {success} from '../utils/result.util'
@@ -9,6 +9,12 @@ import {UserService} from '../service/user.service'
 export class UserController {
 
   constructor(private readonly userService: UserService) {
+  }
+
+  @Post()
+  @UseInterceptors(FileInterceptor('file'))
+  async all(@Body() body) {
+    return success(body)
   }
 
   @Post('findAll')
