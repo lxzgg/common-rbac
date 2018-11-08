@@ -15,6 +15,9 @@ import {Role} from '../../entity/auth_role.entity'
 import {AuthInterceptor} from './auth.interceptor'
 import {hashSync} from 'bcryptjs'
 
+/**
+ * 权限模块
+ */
 @Module({
   controllers: [
     AuthController,

@@ -6,7 +6,7 @@ export const DBConfig: TypeOrmModuleOptions = {
   port: 3306,
   username: 'root',
   password: 'sa',
-  database: 'nest',
+  database: 'battery',
   entities: [
     '*/entity/**.entity{.ts,.js}',
     'entity/**.entity{.ts,.js}',
