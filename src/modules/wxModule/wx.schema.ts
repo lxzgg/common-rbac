@@ -1,5 +1,6 @@
 import {number, object, string} from 'joi'
 
+// 当为true时，允许对象包含被忽略的未知键。 默认为false。
 const schema = object().options({allowUnknown: true})
 
 // 微信支付

@@ -1,8 +1,8 @@
 import {ExecutionContext, Injectable, NestInterceptor} from '@nestjs/common'
 import {Observable} from 'rxjs'
 import {map} from 'rxjs/operators'
-import {AuthService} from './auth.service'
-import {AuthConfig} from './auth.config'
+import {AuthService} from '../../service/auth.service'
+import {AuthConfig} from '../../config/auth.config'
 
 // token即将过期处理
 @Injectable()

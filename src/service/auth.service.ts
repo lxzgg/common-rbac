@@ -1,7 +1,7 @@
 import {ForbiddenException, Injectable} from '@nestjs/common'
 import {sign, verify} from 'jsonwebtoken'
-import {AuthConfig} from './auth.config'
-import {User} from '../../entity/auth_user.entity'
+import {AuthConfig} from '../config/auth.config'
+import {User} from '../entity/auth_user.entity'
 import {Connection} from 'typeorm'
 
 @Injectable()
