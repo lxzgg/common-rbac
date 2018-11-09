@@ -9,6 +9,9 @@ import {readFileSync} from 'fs'
 @Injectable()
 export class WxService {
 
+  constructor(private readonly httpService: HttpService) {
+  }
+
   private readonly parser = new Parser({
     //不获取根节点
     explicitRoot: false,
@@ -29,9 +32,6 @@ export class WxService {
   private readonly REFUND_URL = 'https://api.mch.weixin.qq.com/secapi/pay/refund'
   // 查询退款
   private readonly REFUND_QUERY_URL = 'https://api.mch.weixin.qq.com/pay/refundquery'
-
-  constructor(private readonly httpService: HttpService) {
-  }
 
   /**
    * 获取openid、session_key

@@ -8,11 +8,10 @@ import {WxModule} from './modules/wxModule/wx.module'
 import {Resource} from './entity/auth_resource.entity'
 import {Permission} from './entity/auth_permission.entity'
 import {Role} from './entity/auth_role.entity'
-import {Organization} from './entity/auth_organization.entity'
 import {AuthService} from './service/auth.service'
 import {AuthController} from './controller/auth.controller'
 import {APP_GUARD, APP_INTERCEPTOR} from '@nestjs/core'
-import {AuthGuard} from './common/guards/auth.guard'
+import {AuthGuard} from './common/guard/auth.guard'
 import {AuthInterceptor} from './common/interceptor/auth.interceptor'
 import {MetadataScanner} from '@nestjs/core/metadata-scanner'
 import {Connection, In, Not} from 'typeorm'
@@ -20,32 +19,43 @@ import {ModulesContainer} from '@nestjs/core/injector'
 import {RESOURCE_DEFINITION} from './common/decorator/resource.decorator'
 import {PERMISSION_DEFINITION} from './common/decorator/permission.decorator'
 import {hashSync} from 'bcryptjs'
+import {MsInterceptor} from './common/interceptor/ms.interceptor'
+import {Menu} from './entity/auth_menu.entity'
+import {AdminController} from './controller/admin.controller'
+import {AdminService} from './service/admin.service'
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(DBConfig),
-    TypeOrmModule.forFeature([Organization, Permission, Resource, Role, User]),
     HttpModule,
     WxModule,
   ],
   controllers: [
+    AdminController,
     AuthController,
     UserController,
   ],
   providers: [
-    {
+    {// 权限守卫
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    {
+    {// 权限过期拦截器
       provide: APP_INTERCEPTOR,
       useClass: AuthInterceptor,
     },
+    {// 相应时间拦截器
+      provide: APP_INTERCEPTOR,
+      useClass: MsInterceptor,
+    },
+    AdminService,
     AuthService,
     UserService,
   ],
 })
+
 export class AppModule implements OnModuleInit {
+
   // 元数据扫描程序
   private readonly metadataScanner: MetadataScanner = new MetadataScanner()
 
@@ -60,6 +70,8 @@ export class AppModule implements OnModuleInit {
     await this.loadResourcesAndPermissions()
     await this.createDefaultRole()
     await this.createSuperAdmin()
+    await this.initMenu()
+    await this.initRole()
   }
 
   /**
@@ -131,7 +143,7 @@ export class AppModule implements OnModuleInit {
       existPermissions.forEach(permission => {
         const newPermission = permissions.find(v => v.identify === permission.identify)
         permission.name = newPermission.name
-        permission.action = newPermission.action
+        // permission.action = newPermission.action
       })
       // 保存更新的权限
       await permissionRepository.save(existPermissions)
@@ -158,6 +170,54 @@ export class AppModule implements OnModuleInit {
     const superAdmin = await userRepository.findOne(1)
     if (superAdmin) return
     await userRepository.save({id: 1, username: 'admin', password: hashSync('admin')})
+  }
+
+  /**
+   * 初始化菜单
+   */
+  private async initMenu() {
+    const menuRepository = this.connection.getRepository(Menu)
+    // 添加总菜单
+    await this.connection.getRepository(Menu).insert({name: '权限'})
+    // 添加根菜单
+    const menu1 = await menuRepository.insert({
+      name: '用户管理',
+      url: '/user',
+      icon: 'el-icon-bell',
+      order: 0,
+      parent_id: 1,
+    })
+    const menu2 = await menuRepository.insert({
+      name: '角色管理',
+      url: '/role',
+      icon: 'el-icon-bell',
+      order: 0,
+      parent_id: 1,
+    })
+    const menu3 = await menuRepository.insert({
+      name: '权限管理',
+      url: '/access',
+      icon: 'el-icon-bell',
+      order: 0,
+      parent_id: 1,
+    })
+
+    // const pmenu1 = await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu1.identifiers[0].id})
+
+  }
+
+  /**
+   * 初始化角色
+   */
+  private async initRole() {
+    await this.connection.createQueryBuilder().insert().into(Role).values([
+      {name: '普通用户'},
+      {name: '会议用户'},
+      {name: '会⚪用户'},
+      {name: '超级用户'},
+      {name: '666用户'},
+      {name: '888用户'},
+    ]).execute()
   }
 
 }

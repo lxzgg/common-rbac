@@ -1,7 +1,10 @@
 import {number, object, string} from 'joi'
 
-// 当为true时，允许对象包含被忽略的未知键。 默认为false。
-const schema = object().options({allowUnknown: true})
+/**
+ * abortEarly 停止对第一个错误的验证，否则返回找到的所有错误。默认为true
+ * allowUnknown 允许对象包含被忽略的未知键。默认为false。
+ */
+const schema = object().options({abortEarly: false, allowUnknown: true})
 
 // 微信支付
 export const paySchema = schema.keys({

@@ -1,6 +1,7 @@
-import {BadRequestException, Body, Controller, Post, Req} from '@nestjs/common'
+import {Body, Controller, Post, Req} from '@nestjs/common'
 import {WxService} from './wx.service'
 import {closeOrderSchema, getOrderSchema, paySchema, refundQuerySchema, refundSchema} from './wx.schema'
+import {ErrorException, param_err} from '../../common/exceptions/error.exception'
 
 @Controller('wx')
 export class WxController {
@@ -12,7 +13,7 @@ export class WxController {
   @Post('pay')
   pay(@Body() body) {
     const {value, error} = paySchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.pay(value)
   }
 
@@ -20,7 +21,7 @@ export class WxController {
   @Post('webPay')
   webPay(@Body() body, @Req() request) {
     const {value, error} = paySchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.webPay(value, request.hostname)
   }
 
@@ -28,7 +29,7 @@ export class WxController {
   @Post('orderQuery')
   orderQuery(@Body() body) {
     const {value, error} = getOrderSchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.orderQuery(value)
   }
 
@@ -36,7 +37,7 @@ export class WxController {
   @Post('closeOrder')
   closeOrder(@Body() body) {
     const {value, error} = closeOrderSchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.closeOrder(value)
   }
 
@@ -44,7 +45,7 @@ export class WxController {
   @Post('refund')
   refund(@Body() body) {
     const {value, error} = refundSchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.refund(value)
   }
 
@@ -52,7 +53,7 @@ export class WxController {
   @Post('refundQuery')
   refundQuery(@Body() body) {
     const {value, error} = refundQuerySchema.validate(body)
-    if (error) throw new BadRequestException(error.details[0].message)
+    if (error) throw new ErrorException(param_err.code, error.details)
     return this.wxPayService.refundQuery(value)
   }
 

@@ -1,18 +1,17 @@
 import {Connection, createConnection} from 'typeorm'
-import {User} from '../src/entity/auth_user.entity'
-import {Role} from '../src/entity/auth_role.entity'
+import {Menu} from '../src/entity/auth_menu.entity'
 
 describe('test', () => {
   let connection: Connection
 
-  beforeAll(async () => {
+  before(async () => {
     connection = await createConnection({
       type: 'mysql',
       host: 'localhost',
       port: 3306,
       username: 'root',
       password: 'sa',
-      database: 'nest',
+      database: 'battery',
       entities: [
         '*/entity/**.entity{.ts,.js}',
         'entity/**.entity{.ts,.js}',
@@ -25,31 +24,21 @@ describe('test', () => {
     })
   })
 
-  afterAll(async () => {
+  after(async () => {
     await connection.close()
   })
 
-  it('should role', async () => {
-    const result = await connection.getRepository(Role).find({select: ['name']})
-    console.log(JSON.stringify(result, null, 2))
-  })
-
-  it('should find', async () => {
-    const result = await connection.getRepository(User).findOne(1, {
-      select: ['id'],
-      relations: ['role', 'role.permission'],
+  it('查询所有菜单', async () => {
+    const result = await connection.getRepository(Menu).find({
+      where: {parent_id: 1},
+      select: ['id', 'name'],
+      relations: ['menus'],
     })
     console.log(JSON.stringify(result, null, 2))
   })
 
-  it('should leftJoinAndSelect', async () => {
-    const result = await connection.getRepository(User)
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.role', 'role')
-      .addSelect('user.password', 'user_password')
-      .addSelect('role.name', 'role_name')
-      .getRawMany()
-    console.log(JSON.stringify(result, null, 2))
+  it('添加菜单',async () => {
+
   })
 
 })

@@ -17,12 +17,7 @@ export class Organization {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({
-    length: 50,
-    default: '',
-    select: false,
-    comment: '用户组名称',
-  })
+  @Column({length: 50, default: '', select: false, comment: '用户组名称'})
   name: string
 
   @ManyToMany(() => User, user => user.organization)

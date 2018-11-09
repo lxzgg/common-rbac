@@ -3,6 +3,9 @@ import {PERMISSION_DEFINITION} from '../decorator/permission.decorator'
 import {Permission} from '../../entity/auth_permission.entity'
 import {AuthService} from '../../service/auth.service'
 
+/**
+ * 权限守卫
+ */
 @Injectable()
 export class AuthGuard implements CanActivate {
 
@@ -21,6 +24,7 @@ export class AuthGuard implements CanActivate {
 
     // 验证token,获取用户信息
     const payload: any = this.authService.verifyToken(token)
+    // 用户信息放入request用户token过期判断
     request.payload = payload
 
     //超级管理员不用权限验证

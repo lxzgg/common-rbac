@@ -4,7 +4,9 @@ import {map} from 'rxjs/operators'
 import {AuthService} from '../../service/auth.service'
 import {AuthConfig} from '../../config/auth.config'
 
-// token即将过期处理
+/**
+ * token即将过期处理
+ */
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
 
@@ -12,9 +14,7 @@ export class AuthInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, call$: Observable<any>): Observable<any> | Promise<Observable<any>> {
-
     return call$.pipe(map(data => {
-
       const payload = context.switchToHttp().getRequest().payload
 
       if (payload) {
@@ -25,7 +25,6 @@ export class AuthInterceptor implements NestInterceptor {
       }
 
       return data
-
     }))
 
   }
