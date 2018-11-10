@@ -4,6 +4,7 @@ import {Menu} from '../entity/auth_menu.entity'
 import {Resource} from '../entity/auth_resource.entity'
 import {Role} from '../entity/auth_role.entity'
 import {RolePermission} from '../entity/auth_role_permission.entity'
+import {RoleMenu} from '../entity/auth_role_menu.entity'
 
 @Injectable()
 export class AdminService {
@@ -107,8 +108,21 @@ export class AdminService {
     })
   }
 
-  roleAddMenu(){
+  roleAddMenu(role_id, menus) {
+    const arr = []
+    for (let i = 0; i < menus.length; i++) {
+      const roleMenu = new RoleMenu()
+      roleMenu.role_id = role_id
+      roleMenu.menu_id = menus[i]
+      arr.push(roleMenu)
+    }
 
+    return this.connection.transaction(async entityManager => {
+      await entityManager.getRepository(RoleMenu).delete({role_id})
+      if (arr.length > 0) {
+        await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).execute()
+      }
+    })
   }
 
 }

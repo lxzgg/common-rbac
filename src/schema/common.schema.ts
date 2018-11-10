@@ -1,4 +1,4 @@
-import {number, object} from 'joi'
+import {object} from 'joi'
 
 /**
  * joi公共配置
@@ -7,10 +7,3 @@ import {number, object} from 'joi'
  */
 export const schema = object().options({abortEarly: false, allowUnknown: true})
 
-export const idSchema = schema.keys({
-  id: number().required(),
-})
-
-export const roleIdSchema = schema.keys({
-  role_id: number().required(),
-})

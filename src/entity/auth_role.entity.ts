@@ -26,7 +26,7 @@ export class Role {
 
   @ManyToMany(() => Menu)
   @JoinTable({name: 'auth_role_menu', joinColumn: {name: 'role_id'}, inverseJoinColumn: {name: 'menu_id'}})
-  menus:Menu[]
+  menus: Menu[]
 
   @ManyToMany(() => Permission, permission => permission.role)
   @JoinTable({

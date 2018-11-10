@@ -5,13 +5,14 @@ import {success} from '../utils/result.util'
 import {ErrorException, param_err} from '../common/exceptions/error.exception'
 import {
   addRoleSchema,
+  idSchema,
   roleAddAccessSchema,
   roleAddMenuSchema,
+  roleIdSchema,
   roleMenuSchema,
   rolePageSchema,
   updateRoleSchema,
 } from '../schema/admin.schema'
-import {idSchema, roleIdSchema} from '../schema/common.schema'
 
 @Controller('admin')
 @Resource({name: '管理员操作', identify: 'admin:manage'})
@@ -26,7 +27,7 @@ export class AdminController {
     return success(await this.adminService.getMenu())
   }
 
-  // 查询角色所有菜单
+  // 查询角色已有菜单
   @Post('getRoleMenu')
   async getRoleMenu(@Body() body) {
     const {value, error} = roleMenuSchema.validate(body)
@@ -107,6 +108,9 @@ export class AdminController {
     const {value, error} = roleAddMenuSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
 
-    return success(await this.adminService.roleAddMenu())
+    const role_id = value.role_id
+    const menus = value.menus
+
+    return success(await this.adminService.roleAddMenu(role_id, menus))
   }
 }

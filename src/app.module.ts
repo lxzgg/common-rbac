@@ -210,9 +210,9 @@ export class AppModule implements OnModuleInit {
     await menuRepository.insert({name: '用户管理7', url: '/admin/user', parent_id: menu3.identifiers[0].id})
     const pmenu3 = await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu3.identifiers[0].id})
 
-      await menuRepository.insert({name: '用户管理144', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
-      await menuRepository.insert({name: '用户管理441', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
-      await menuRepository.insert({name: '用户管理156', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理144', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理441', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理156', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
 
   }
 
