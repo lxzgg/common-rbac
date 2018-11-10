@@ -178,7 +178,7 @@ export class AppModule implements OnModuleInit {
   private async initMenu() {
     const menuRepository = this.connection.getRepository(Menu)
     // 添加总菜单
-    await this.connection.getRepository(Menu).insert({name: '权限'})
+    await this.connection.getRepository(Menu).insert({name: '菜单'})
     // 添加根菜单
     const menu1 = await menuRepository.insert({
       name: '用户管理',
@@ -202,7 +202,17 @@ export class AppModule implements OnModuleInit {
       parent_id: 1,
     })
 
-    // const pmenu1 = await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu1.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu1.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理2', url: '/admin/user', parent_id: menu1.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu2.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理3', url: '/admin/user', parent_id: menu2.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理5', url: '/admin/user', parent_id: menu3.identifiers[0].id})
+    await menuRepository.insert({name: '用户管理7', url: '/admin/user', parent_id: menu3.identifiers[0].id})
+    const pmenu3 = await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu3.identifiers[0].id})
+
+      await menuRepository.insert({name: '用户管理144', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
+      await menuRepository.insert({name: '用户管理441', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
+      await menuRepository.insert({name: '用户管理156', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
 
   }
 

@@ -16,6 +16,40 @@ export class AdminService {
     return this.connection.getRepository(Menu).find({where: {parent_id: 1}, relations: ['menus', 'menus.menus']})
   }
 
+  // 查询角色所有菜单
+  async getRoleMenu(id) {
+    const result = await this.connection.getRepository(Role).findOne({where: {id}, relations: ['menus']})
+
+    const arr = result.menus
+
+    const menus = []
+
+    // 一级菜单
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].parent_id === 1) {
+        arr[i]['menus'] = []
+
+        // 二级菜单
+        for (let j = 0; j < arr.length; j++) {
+          if (arr[i].id === arr[j].parent_id) {
+            arr[j]['menus'] = []
+
+            // 三级菜单
+            for (let k = 0; k < arr.length; k++) {
+              if (arr[j].id === arr[k].parent_id) arr[j]['menus'].push(arr[k])
+            }
+
+            arr[i]['menus'].push(arr[j])
+          }
+        }
+
+        menus.push(arr[i])
+      }
+    }
+
+    return menus
+  }
+
   // 查询所有权限
   getAccess() {
     return this.connection.getRepository(Resource).find({relations: ['permission']})
@@ -28,7 +62,12 @@ export class AdminService {
 
   // 修改角色
   updateRole(id, name) {
-    return this.connection.getRepository(Role).save({id, name})
+    return this.connection.getRepository(Role).update({id}, {name})
+  }
+
+  // 删除角色
+  delRole(id) {
+    return this.connection.getRepository(Role).delete(id)
   }
 
   // 查询所有角色
@@ -51,7 +90,7 @@ export class AdminService {
   }
 
   // 角色更新权限
-  async roleAddAccess(role_id, permissions) {
+  roleAddAccess(role_id, permissions) {
     const arr = []
     for (let i = 0; i < permissions.length; i++) {
       const rolePermission = new RolePermission()
@@ -60,12 +99,16 @@ export class AdminService {
       arr.push(rolePermission)
     }
 
-    return await this.connection.transaction(async entityManager => {
-      await entityManager.createQueryBuilder().delete().from(RolePermission).where({role_id}).execute()
+    return this.connection.transaction(async entityManager => {
+      await entityManager.getRepository(RolePermission).delete({role_id})
       if (arr.length > 0) {
         await entityManager.createQueryBuilder().insert().into(RolePermission).values(arr).execute()
       }
     })
+  }
+
+  roleAddMenu(){
+
   }
 
 }

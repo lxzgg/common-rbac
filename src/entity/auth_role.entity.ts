@@ -11,6 +11,7 @@ import {Permission} from './auth_permission.entity'
 import {DateFormat} from '../utils/date.util'
 import {User} from './auth_user.entity'
 import {Organization} from './auth_organization.entity'
+import {Menu} from './auth_menu.entity'
 
 @Entity('auth_role')
 export class Role {
@@ -22,6 +23,10 @@ export class Role {
 
   @ManyToMany(() => User, user => user.role)
   user: User[]
+
+  @ManyToMany(() => Menu)
+  @JoinTable({name: 'auth_role_menu', joinColumn: {name: 'role_id'}, inverseJoinColumn: {name: 'menu_id'}})
+  menus:Menu[]
 
   @ManyToMany(() => Permission, permission => permission.role)
   @JoinTable({

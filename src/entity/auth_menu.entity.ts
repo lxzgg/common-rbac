@@ -30,7 +30,6 @@ export class Menu {
   menus: Menu[]
 
   @ManyToMany(() => Role)
-  @JoinTable({name: 'auth_role_menu', joinColumn: {name: 'menu_id'}, inverseJoinColumn: {name: 'role_id'}})
-  role: Role[]
+  roles: Role[]
 
 }

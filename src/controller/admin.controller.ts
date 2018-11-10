@@ -3,8 +3,15 @@ import {Resource} from '../common/decorator/resource.decorator'
 import {AdminService} from '../service/admin.service'
 import {success} from '../utils/result.util'
 import {ErrorException, param_err} from '../common/exceptions/error.exception'
-import {addRoleSchema, roleAddAccessSchema, rolePageSchema, updateRoleSchema} from '../schema/admin.schema'
-import {roleIdSchema} from '../schema/common.schema'
+import {
+  addRoleSchema,
+  roleAddAccessSchema,
+  roleAddMenuSchema,
+  roleMenuSchema,
+  rolePageSchema,
+  updateRoleSchema,
+} from '../schema/admin.schema'
+import {idSchema, roleIdSchema} from '../schema/common.schema'
 
 @Controller('admin')
 @Resource({name: '管理员操作', identify: 'admin:manage'})
@@ -13,11 +20,20 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {
   }
 
-  // 查询所有用户
+  // 查询所有菜单
   @Post('getMenu')
   async getMenu() {
     return success(await this.adminService.getMenu())
   }
+
+  // 查询角色所有菜单
+  @Post('getRoleMenu')
+  async getRoleMenu(@Body() body) {
+    const {value, error} = roleMenuSchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+    return success(await this.adminService.getRoleMenu(value.id))
+  }
+
 
   // 查询所有权限
   @Post('getAccess')
@@ -54,6 +70,15 @@ export class AdminController {
     return success(await this.adminService.updateRole(value.id, value.name))
   }
 
+  // 删除角色
+  @Post('delRole')
+  async delRole(@Body() body) {
+    const {value, error} = idSchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+    return success(await this.adminService.delRole(value.id))
+  }
+
+
   // 查询角色已有权限
   @Post('getRoleAccess')
   // @Permission({name: '查询权限', identify: 'roleAccess:get'})
@@ -63,7 +88,7 @@ export class AdminController {
     return success(await this.adminService.getRoleAccess(value.role_id))
   }
 
-  // 角色更新权限
+  // 角色添加权限
   @Post('roleAddAccess')
   // @Permission({name: '查询权限', identify: 'roleAccess:get'})
   async roleAddAccess(@Body() body) {
@@ -73,9 +98,15 @@ export class AdminController {
     const role_id = value.role_id
     const permissions = value.permission
 
-    await this.adminService.roleAddAccess(role_id, permissions)
-
-    return success()
+    return success(await this.adminService.roleAddAccess(role_id, permissions))
   }
 
+  // 角色添加菜单
+  @Post('roleAddMenu')
+  async roleAddMenu(@Body() body) {
+    const {value, error} = roleAddMenuSchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+
+    return success(await this.adminService.roleAddMenu())
+  }
 }
