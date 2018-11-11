@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm'
 import {Resource} from './auth_resource.entity'
 import {Role} from './auth_role.entity'
 
@@ -13,10 +13,15 @@ export class Permission {
   @Column({length: 50, unique: true, select: false, nullable: false, comment: '权限唯一标识,如:用户管理=>user:createUser'})
   identify: string
 
-  @ManyToMany(() => Role, role => role.permission)
-  role: Role[]
+  @ManyToMany(() => Role, role => role.permissions)
+  @JoinTable({
+    name: 'auth_role_permission',
+    joinColumn: {name: 'permission_id'},
+    inverseJoinColumn: {name: 'role_id'},
+  })
+  roles: Role[]
 
-  @ManyToOne(() => Resource, resource => resource.permission, {nullable: false, onDelete: 'CASCADE'})
+  @ManyToOne(() => Resource, resource => resource.permissions, {nullable: false, onDelete: 'CASCADE'})
   @JoinColumn({name: 'resource_id'})
   resource: Resource
 }

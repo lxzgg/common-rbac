@@ -35,8 +35,8 @@ export class AuthGuard implements CanActivate {
     if (!user) throw new ForbiddenException('用户不存在')
 
     const userPermission: any = []
-    user.role.forEach(role => {
-      role.permission.forEach(permission => {
+    user.roles.forEach(role => {
+      role.permissions.forEach(permission => {
         userPermission.push(permission.identify)
       })
     })

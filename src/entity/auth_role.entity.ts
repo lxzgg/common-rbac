@@ -21,23 +21,18 @@ export class Role {
   @Column({length: 50, default: '', comment: '角色名'})
   name: string
 
-  @ManyToMany(() => User, user => user.role)
-  user: User[]
+  @ManyToMany(() => User, user => user.roles)
+  users: User[]
 
   @ManyToMany(() => Menu)
   @JoinTable({name: 'auth_role_menu', joinColumn: {name: 'role_id'}, inverseJoinColumn: {name: 'menu_id'}})
   menus: Menu[]
 
-  @ManyToMany(() => Permission, permission => permission.role)
-  @JoinTable({
-    name: 'auth_role_permission',
-    joinColumn: {name: 'role_id'},
-    inverseJoinColumn: {name: 'permission_id'},
-  })
-  permission: Permission[]
+  @ManyToMany(() => Permission, permission => permission.roles)
+  permissions: Permission[]
 
-  @ManyToMany(() => Organization, organization => organization.role)
-  organization: Organization[]
+  @ManyToMany(() => Organization, organization => organization.roles)
+  organizations: Organization[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {

@@ -1,5 +1,4 @@
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
-import {Role} from './auth_role.entity'
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity('auth_menu')
 export class Menu {
@@ -28,8 +27,5 @@ export class Menu {
 
   @OneToMany(() => Menu, menu => menu.menu)
   menus: Menu[]
-
-  @ManyToMany(() => Role)
-  roles: Role[]
 
 }

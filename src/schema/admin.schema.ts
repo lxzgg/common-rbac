@@ -1,40 +1,44 @@
 import {array, number, string} from 'joi'
 import {schema} from './common.schema'
 
+
+// 通用ID
 export const idSchema = schema.keys({
   id: number().required(),
 })
 
-// 查询角色所有菜单
-export const roleMenuSchema = schema.keys({
-  id: number().required(),
+// 通用分页
+export const pageSchema = schema.keys({
+  page: number().default(1),
+  limit: number().default(10),
 })
 
+// 通用角色ID
 export const roleIdSchema = schema.keys({
   role_id: number().required(),
 })
 
+// 登录
+export const loginSchema = schema.keys({
+  username: string().required(),
+  password: string().required(),
+})
+
 // 添加角色
 export const addRoleSchema = schema.keys({
-  name: string().required(),
+  name: string().max(50).required(),
 })
 
 // 修改角色
 export const updateRoleSchema = schema.keys({
   id: number().required(),
-  name: string().required(),
+  name: string().max(50).required(),
 })
 
-// 查询角色分页
-export const rolePageSchema = schema.keys({
-  page: number().default(1),
-  limit: number().default(15),
-})
-
-// 查询角色已有权限
+// 角色添加权限
 export const roleAddAccessSchema = schema.keys({
   role_id: number().required(),
-  permission: array().items(number()).required(),
+  permissions: array().items(number()).required(),
 })
 
 // 角色添加菜单

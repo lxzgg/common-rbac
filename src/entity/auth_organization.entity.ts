@@ -20,21 +20,21 @@ export class Organization {
   @Column({length: 50, default: '', select: false, comment: '用户组名称'})
   name: string
 
-  @ManyToMany(() => User, user => user.organization)
+  @ManyToMany(() => User, user => user.organizations)
   @JoinTable({
     name: 'auth_organization_user',
     joinColumn: {name: 'organization_id'},
     inverseJoinColumn: {name: 'user_id'},
   })
-  user: User[]
+  users: User[]
 
-  @ManyToMany(() => Role, role => role.organization)
+  @ManyToMany(() => Role, role => role.organizations)
   @JoinTable({
     name: 'auth_organization_role',
     joinColumn: {name: 'organization_id'},
     inverseJoinColumn: {name: 'role_id'},
   })
-  role: Role[]
+  roles: Role[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {

@@ -42,7 +42,7 @@ describe('test', () => {
     const result = await connection.getRepository(Role).findOne({where: {id: 1}, relations: ['menus']})
 
     const arr = result.menus
-
+    
     const menus = []
 
     // 一级菜单

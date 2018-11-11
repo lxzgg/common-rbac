@@ -35,16 +35,16 @@ export class User {
   @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
   status: boolean
 
-  @ManyToMany(() => Role, role => role.user)
+  @ManyToMany(() => Role, role => role.users)
   @JoinTable({
     name: 'auth_user_role',
     joinColumn: {name: 'user_id'},
     inverseJoinColumn: {name: 'role_id'},
   })
-  role: Role[]
+  roles: Role[]
 
-  @ManyToMany(() => Organization, organization => organization.user)
-  organization: Organization[]
+  @ManyToMany(() => Organization, organization => organization.users)
+  organizations: Organization[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {

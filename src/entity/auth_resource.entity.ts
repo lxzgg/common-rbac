@@ -14,6 +14,6 @@ export class Resource {
   identify: string
 
   @OneToMany(() => Permission, permission => permission.resource)
-  permission: Permission[]
+  permissions: Permission[]
 
 }

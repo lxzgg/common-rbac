@@ -51,9 +51,13 @@ export class AdminService {
     return menus
   }
 
+  getRoleMenuKeys(role_id) {
+    return this.connection.getRepository(RoleMenu).find({where: {role_id}, select: ['menu_id']})
+  }
+
   // 查询所有权限
   getAccess() {
-    return this.connection.getRepository(Resource).find({relations: ['permission']})
+    return this.connection.getRepository(Resource).find({relations: ['permissions']})
   }
 
   // 添加角色
@@ -108,6 +112,7 @@ export class AdminService {
     })
   }
 
+  // 角色添加菜单
   roleAddMenu(role_id, menus) {
     const arr = []
     for (let i = 0; i < menus.length; i++) {

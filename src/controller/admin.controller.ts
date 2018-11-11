@@ -6,11 +6,11 @@ import {ErrorException, param_err} from '../common/exceptions/error.exception'
 import {
   addRoleSchema,
   idSchema,
+  loginSchema,
+  pageSchema,
   roleAddAccessSchema,
   roleAddMenuSchema,
   roleIdSchema,
-  roleMenuSchema,
-  rolePageSchema,
   updateRoleSchema,
 } from '../schema/admin.schema'
 
@@ -19,6 +19,14 @@ import {
 export class AdminController {
 
   constructor(private readonly adminService: AdminService) {
+  }
+
+  @Post('login')
+  async login(@Body() body) {
+    const {value, error} = loginSchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+    console.log(value)
+    return value
   }
 
   // 查询所有菜单
@@ -30,11 +38,18 @@ export class AdminController {
   // 查询角色已有菜单
   @Post('getRoleMenu')
   async getRoleMenu(@Body() body) {
-    const {value, error} = roleMenuSchema.validate(body)
+    const {value, error} = idSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
     return success(await this.adminService.getRoleMenu(value.id))
   }
 
+  // 查询角色已有菜单ID
+  @Post('getRoleMenuKeys')
+  async getRoleMenuKeys(@Body() body) {
+    const {value, error} = roleIdSchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+    return success(await this.adminService.getRoleMenuKeys(value.role_id))
+  }
 
   // 查询所有权限
   @Post('getAccess')
@@ -47,7 +62,7 @@ export class AdminController {
   @Post('getRole')
   // @Permission({name: '查询角色', identify: 'role:get'})
   async getRole(@Body() body) {
-    const {value, error} = rolePageSchema.validate(body)
+    const {value, error} = pageSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
     const page = value.page
     const limit = value.limit
@@ -68,7 +83,8 @@ export class AdminController {
   async updateRole(@Body() body) {
     const {value, error} = updateRoleSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
-    return success(await this.adminService.updateRole(value.id, value.name))
+    await this.adminService.updateRole(value.id, value.name)
+    return success()
   }
 
   // 删除角色
@@ -76,9 +92,9 @@ export class AdminController {
   async delRole(@Body() body) {
     const {value, error} = idSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
-    return success(await this.adminService.delRole(value.id))
+    await this.adminService.delRole(value.id)
+    return success()
   }
-
 
   // 查询角色已有权限
   @Post('getRoleAccess')
@@ -97,7 +113,7 @@ export class AdminController {
     if (error) throw new ErrorException(param_err.code, error.details)
 
     const role_id = value.role_id
-    const permissions = value.permission
+    const permissions = value.permissions
 
     return success(await this.adminService.roleAddAccess(role_id, permissions))
   }
