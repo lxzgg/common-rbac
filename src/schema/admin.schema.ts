@@ -22,6 +22,13 @@ export const roleIdSchema = schema.keys({
 export const loginSchema = schema.keys({
   username: string().required(),
   password: string().required(),
+  captcha: string().required(),
+  key: string().required(),
+})
+
+// 验证码
+export const keySchema = schema.keys({
+  key: string().length(30).required(),
 })
 
 // 添加角色

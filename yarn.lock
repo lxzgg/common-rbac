@@ -29,6 +29,14 @@
     path-to-regexp "2.2.1"
     uuid "3.3.2"
 
+"@nestjs/jwt@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/jwt/-/jwt-0.2.0.tgz#ff519b10c127ee992ffbdb043535c7031805c32f"
+  integrity sha512-IoF/Ruy0NLO0NL3GPc7AkBYR7IwpmjqBrxDSlTZAZ4kDDmM0LjQm9Q/2LTFw5wMHW0rrnspAPq0QbN4Y/XyN0g==
+  dependencies:
+    "@types/jsonwebtoken" "^7.2.7"
+    jsonwebtoken "^8.3.0"
+
 "@nestjs/testing@^5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-5.4.0.tgz#4728021fc4012243b4dd2ffb4228b59df7770235"
@@ -69,10 +77,24 @@
   resolved "https://registry.yarnpkg.com/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
   integrity sha512-KEIlhXnIutzKwRbQkGWb/I4HFqBuUykAdHgDED6xqwXJfONCjF5VoE0cXEiurh3XauygxzeDzgtXUqvLkxFzzA==
 
+"@types/ioredis@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.0.4.tgz#c0a809064c05e4c2663803128d46042e73c92558"
+  integrity sha512-QdJTMFrmKkphjoGIxItTMhP++8/6INLbgSIxB8kd9N+3OuiuiaZ2knt+OR4gFQrloac/ctwaQA1PCzISmD9afQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/joi@^14.0.0":
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/@types/joi/-/joi-14.0.0.tgz#7906aca6850868f39f888efcaef28bbcbbab5498"
   integrity sha512-q3r+5QfNrthJL+5Pvb9MOP7rJniTfAV+cGbsO2a3ItGSuwmp2vdjjZ/VCWKwGT5lNx4eOvZI4O3IpSIXh3f4RA==
+
+"@types/jsonwebtoken@^7.2.7":
+  version "7.2.8"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-7.2.8.tgz#8d199dab4ddb5bba3234f8311b804d2027af2b3a"
+  integrity sha512-XENN3YzEB8D6TiUww0O8SRznzy1v+77lH7UmuN54xq/IHIsyWjWOzZuFFTtoiRuaE782uAoRwBe/wwow+vQXZw==
+  dependencies:
+    "@types/node" "*"
 
 "@types/jsonwebtoken@^8.3.0":
   version "8.3.0"
@@ -86,10 +108,10 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.5.tgz#8a4accfc403c124a0bafe8a9fc61a05ec1032073"
   integrity sha512-lAVp+Kj54ui/vLUFxsJTMtWvZraZxum3w3Nwkble2dNuV5VnPA+Mi2oGX9XYJAaIvZi3tn3cbjS/qcJXRb6Bww==
 
-"@types/node@*", "@types/node@^10.12.3":
-  version "10.12.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.3.tgz#3918b73ceed484e58367be5acb79d1775239e393"
-  integrity sha512-sfGmOtSMSbQ/AKG8V9xD1gmjquC9awIIZ/Kj309pHb2n3bcRAcGMQv5nJ6gCXZVsneGE4+ve8DXKRCsrg3TFzg==
+"@types/node@*", "@types/node@^10.12.5":
+  version "10.12.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.5.tgz#7e7ea1a9b34d2c8d704cb0b755dffbcda34741ad"
+  integrity sha512-GzdHjq3t3eGLMv92Al90Iq+EoLL+86mPfQhuglbBFO7HiLdC/rkt+zrzJJumAiBF6nsrBWhou22rPW663AAyFw==
 
 "@types/qs@^6.5.1":
   version "6.5.1"
@@ -413,6 +435,11 @@ cliui@^4.0.0:
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
 
+cluster-key-slot@^1.0.6:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/cluster-key-slot/-/cluster-key-slot-1.0.12.tgz#d5deff2a520717bc98313979b687309b2d368e29"
+  integrity sha512-21O0kGmvED5OJ7ZTdqQ5lQQ+sjuez33R+d35jZKLwqUb5mqcPHUsxOSzj61+LHVtxGZd1kShbQM3MjB/gBJkVg==
+
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
@@ -581,6 +608,11 @@ delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
+
+denque@^1.1.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-1.4.0.tgz#79e2f0490195502107f24d9553f374837dabc916"
+  integrity sha512-gh513ac7aiKrAgjiIBWZG0EASyDF9p4JMWwKA8YU5s9figrL5SRNEMT6FDynsegakuhWd1wVqTvqvqAoDxw7wQ==
 
 depd@1.1.1:
   version "1.1.1"
@@ -826,6 +858,11 @@ find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+flexbuffer@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/flexbuffer/-/flexbuffer-0.0.6.tgz#039fdf23f8823e440c38f3277e6fef1174215b30"
+  integrity sha1-A5/fI/iCPkQMOPMnfm/vEXQhWzA=
+
 follow-redirects@^1.3.0:
   version "1.5.9"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.9.tgz#c9ed9d748b814a39535716e531b9196a845d89c6"
@@ -944,9 +981,9 @@ highlight.js@^9.6.0:
   integrity sha512-Sc28JNQNDzaH6PORtRLMvif9RSn1mYuOoX3omVjnb0+HbpPygU2ALBI0R/wsiqCb4/fcp07Gdo8g+fhtFrQl6A==
 
 hoek@6.x.x:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-6.0.2.tgz#a79eac32bdc4fdd6ca056951e3066d84c229d228"
-  integrity sha512-0RGPLkyxpsMJVj/iOCaJaIWFEch988eUicJJpRiQ+Or1CMvBXcoZPlSx9FhreDWw4hxMYy8xgTEdlsYQDTnxWA==
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/hoek/-/hoek-6.0.3.tgz#7884360426d927865a0a1251fc9c59313af5b798"
+  integrity sha512-TU6RyZ/XaQCTWRLrdqZZtZqwxUVr6PDMfi6MlWNURZ7A6czanQqX4pFE1mdOUQR9FdPCsZ0UzL8jI/izZ+eBSQ==
 
 hosted-git-info@^2.1.4:
   version "2.7.1"
@@ -1019,6 +1056,22 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
   integrity sha1-EEqOSqym09jNFXqO+L+rLXo//bY=
+
+ioredis@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.2.0.tgz#f0f76fa5067a51c365ef1411f6572478a825971d"
+  integrity sha512-PdxZGNJBfPiR2RI6DkqmiacL1+ML3gaqEiaC5QXWQt9eSTlGj+BwDCct0s8irn1ed8GyzAHTzcjvU9fmnl6D7A==
+  dependencies:
+    cluster-key-slot "^1.0.6"
+    debug "^3.1.0"
+    denque "^1.1.0"
+    flexbuffer "0.0.6"
+    lodash.defaults "^4.2.0"
+    lodash.flatten "^4.4.0"
+    redis-commands "1.4.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^1.0.0"
 
 ipaddr.js@1.8.0:
   version "1.8.0"
@@ -1120,10 +1173,10 @@ iterare@0.0.8:
   resolved "https://registry.yarnpkg.com/iterare/-/iterare-0.0.8.tgz#a969a80a1fbff6b78f28776594d7bc2bdfab6aad"
   integrity sha1-qWmoCh+/9rePKHdllNe8K9+raq0=
 
-joi@^14.0.4:
-  version "14.0.4"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-14.0.4.tgz#f066f79330f6bd6f3dda243be6d2c211f83a5f9b"
-  integrity sha512-KUXRcinDUMMbtlOk7YLGHQvG73dLyf8bmgE+6sBTkdJbZpeGVGAlPXEHLiQBV7KinD/VLD5OA0EUgoTTfbRAJQ==
+joi@^14.0.6:
+  version "14.0.6"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-14.0.6.tgz#8c72314af6dba13ca48028a4f0af992ddc5a7472"
+  integrity sha512-mKXPSNYMG3taVBZemQj3pPOlMZGrnnu14JKAC6AHg6jJVX35L7oDk89ss1sHj+laDSEh3mD2PmeheI5k6Aw8nQ==
   dependencies:
     hoek "6.x.x"
     isemail "3.x.x"
@@ -1257,6 +1310,16 @@ lodash.clonedeep@^3.0.0:
   dependencies:
     lodash._baseclone "^3.0.0"
     lodash._bindcallback "^3.0.0"
+
+lodash.defaults@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
+  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+
+lodash.flatten@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
+  integrity sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8=
 
 lodash.includes@^4.3.0:
   version "4.3.0"
@@ -1629,6 +1692,13 @@ once@^1.3.0:
   dependencies:
     wrappy "1"
 
+opentype.js@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/opentype.js/-/opentype.js-0.7.3.tgz#40fb8ce18bfd60e74448efdfe442834098397aab"
+  integrity sha1-QPuM4Yv9YOdESO/f5EKDQJg5eqs=
+  dependencies:
+    tiny-inflate "^1.0.2"
+
 optional@0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/optional/-/optional-0.1.4.tgz#cdb1a9bedc737d2025f690ceeb50e049444fd5b3"
@@ -1867,6 +1937,23 @@ redeyed@~2.1.0:
   dependencies:
     esprima "~4.0.0"
 
+redis-commands@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
+  integrity sha512-cu8EF+MtkwI4DLIT0x9P8qNTLFhQD4jLfxLR0cCNkeGzs87FN6879JOJwNQR/1zD7aSYNbU0hgsV9zGY71Itvw==
+
+redis-errors@^1.0.0, redis-errors@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/redis-errors/-/redis-errors-1.2.0.tgz#eb62d2adb15e4eaf4610c04afe1529384250abad"
+  integrity sha1-62LSrbFeTq9GEMBK/hUpOEJQq60=
+
+redis-parser@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-3.0.0.tgz#b66d828cdcafe6b4b8a428a7def4c6bcac31c8b4"
+  integrity sha1-tm2CjNyv5rS4pCin3vTGvKwxyLQ=
+  dependencies:
+    redis-errors "^1.0.0"
+
 reflect-metadata@^0.1.12:
   version "0.1.12"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.12.tgz#311bf0c6b63cd782f228a81abe146a2bfa9c56f2"
@@ -2050,6 +2137,11 @@ sqlstring@2.3.1:
   resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.1.tgz#475393ff9e91479aea62dcaf0ca3d14983a7fb40"
   integrity sha1-R1OT/56RR5rqYtyvDKPRSYOn+0A=
 
+standard-as-callback@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-1.0.1.tgz#2e9e1e9d278d7d77580253faaec42269015e3c1d"
+  integrity sha512-izxEITSyc7S+5oOiF/URiYaNkemPUxIndCNv66jJ548Y1TVxhBvioNMSPrZIQdaZDlhnguOdUzHA/7hJ3xFhuQ==
+
 "statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
@@ -2187,6 +2279,13 @@ supports-color@^5.3.0:
   dependencies:
     has-flag "^3.0.0"
 
+svg-captcha@^1.3.11:
+  version "1.3.11"
+  resolved "https://registry.yarnpkg.com/svg-captcha/-/svg-captcha-1.3.11.tgz#f16e9d68ca0b189627c0557ef8e6a085f7e87ee9"
+  integrity sha512-yJIxF3XYRDfMiwoqvnPrQRADghJ0RpktoEvF3H6DKqhxT4xYA5FiyklaWXcXBJ37/1DmCavkfN1wrmuI6PWagQ==
+  dependencies:
+    opentype.js "^0.7.3"
+
 thenify-all@^1.0.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/thenify-all/-/thenify-all-1.6.0.tgz#1a1918d402d8fc3f98fbf234db0bcc8cc10e9726"
@@ -2208,6 +2307,11 @@ timers-ext@0.1, timers-ext@^0.1.5:
   dependencies:
     es5-ext "~0.10.46"
     next-tick "1"
+
+tiny-inflate@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/tiny-inflate/-/tiny-inflate-1.0.2.tgz#93d9decffc8805bd57eae4310f0b745e9b6fb3a7"
+  integrity sha1-k9nez/yIBb1X6uQxDwt0Xptvs6c=
 
 topo@3.x.x:
   version "3.0.3"

@@ -1,4 +1,7 @@
+import * as Redis from 'ioredis'
 import {TypeOrmModuleOptions} from '@nestjs/typeorm'
+
+export const redis = new Redis(6379, '127.0.0.1')
 
 export const DBConfig: TypeOrmModuleOptions = {
   type: 'mysql',

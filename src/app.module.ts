@@ -23,9 +23,14 @@ import {MsInterceptor} from './common/interceptor/ms.interceptor'
 import {Menu} from './entity/auth_menu.entity'
 import {AdminController} from './controller/admin.controller'
 import {AdminService} from './service/admin.service'
+import {JwtModule} from '@nestjs/jwt'
 
 @Module({
   imports: [
+    JwtModule.register({
+      secretOrPrivateKey: 'a59236fc3471490181556c294f41b48c',
+      signOptions: {expiresIn: 3600},
+    }),
     TypeOrmModule.forRoot(DBConfig),
     HttpModule,
     WxModule,

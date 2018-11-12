@@ -2,10 +2,11 @@ import {Body, Controller, Post} from '@nestjs/common'
 import {Resource} from '../common/decorator/resource.decorator'
 import {AdminService} from '../service/admin.service'
 import {success} from '../utils/result.util'
-import {ErrorException, param_err} from '../common/exceptions/error.exception'
+import {captcha_err, captcha_expired, ErrorException, param_err} from '../common/exceptions/error.exception'
 import {
   addRoleSchema,
   idSchema,
+  keySchema,
   loginSchema,
   pageSchema,
   roleAddAccessSchema,
@@ -13,20 +14,47 @@ import {
   roleIdSchema,
   updateRoleSchema,
 } from '../schema/admin.schema'
+import {create, randomText} from 'svg-captcha'
+import {redis} from '../config/db.config'
+import {JwtService} from '@nestjs/jwt'
 
 @Controller('admin')
 @Resource({name: '管理员操作', identify: 'admin:manage'})
 export class AdminController {
 
-  constructor(private readonly adminService: AdminService) {
+  constructor(private readonly adminService: AdminService,
+              private readonly jwtService: JwtService) {
   }
 
   @Post('login')
   async login(@Body() body) {
     const {value, error} = loginSchema.validate(body)
     if (error) throw new ErrorException(param_err.code, error.details)
-    console.log(value)
-    return value
+    const captcha = await redis.get(value.key)
+
+    if (!captcha) throw new ErrorException(captcha_expired.code, captcha_expired.message)
+    if (value.captcha.toUpperCase() !== captcha.toUpperCase()) throw new ErrorException(captcha_err.code, captcha_err.message)
+
+    const token = this.jwtService.sign({a: 1})
+
+    return success()
+  }
+
+  @Post('captcha')
+  async captcha() {
+    const code = create({height: 40, color: true, ignoreChars: '0o1ig'})
+    const randomKey = randomText(30)
+    await redis.setex(randomKey, 60 * 3, code.text)
+    return success({key: randomKey, data: code.data})
+  }
+
+  @Post('newCaptcha')
+  async newCaptcha(@Body() body) {
+    const {value, error} = keySchema.validate(body)
+    if (error) throw new ErrorException(param_err.code, error.details)
+    const code = create({height: 40, color: true, ignoreChars: '0o1ig'})
+    await redis.setex(value.key, 60 * 3, code.text)
+    return success(code.data)
   }
 
   // 查询所有菜单
