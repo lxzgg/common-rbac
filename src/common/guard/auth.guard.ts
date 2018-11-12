@@ -2,6 +2,7 @@ import {CanActivate, ExecutionContext, ForbiddenException, Injectable} from '@ne
 import {PERMISSION_DEFINITION} from '../decorator/permission.decorator'
 import {Permission} from '../../entity/auth_permission.entity'
 import {AuthService} from '../../service/auth.service'
+import {JwtService} from '@nestjs/jwt'
 
 /**
  * 权限守卫
@@ -9,7 +10,8 @@ import {AuthService} from '../../service/auth.service'
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService,
+              private readonly jwtService: JwtService) {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,7 +25,7 @@ export class AuthGuard implements CanActivate {
     if (!token) throw new ForbiddenException('Token is null')
 
     // 验证token,获取用户信息
-    const payload: any = this.authService.verifyToken(token)
+    const payload: any = this.jwtService.verify(token)
     // 用户信息放入request用户token过期判断
     request.payload = payload
 

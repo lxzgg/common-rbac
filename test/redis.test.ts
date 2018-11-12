@@ -3,7 +3,11 @@ import {sign, verify} from 'jsonwebtoken'
 
 describe('redis', () => {
 
-  const redis = new Redis(6379, '127.0.0.1')
+  const redis = new Redis({
+    host: '127.0.0.1',
+    port: 6379,
+    db: 0,
+  })
 
   it('should 1', async () => {
     await redis.set('key', '110')
@@ -16,7 +20,7 @@ describe('redis', () => {
   })
 
   it('should d', function () {
-    const a = sign({a: 1}, 'key', {expiresIn:  10})
+    const a = sign({a: 1}, 'key', {expiresIn: 10})
     console.log(a)
   })
 

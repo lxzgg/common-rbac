@@ -5,11 +5,22 @@ import {Resource} from '../entity/auth_resource.entity'
 import {Role} from '../entity/auth_role.entity'
 import {RolePermission} from '../entity/auth_role_permission.entity'
 import {RoleMenu} from '../entity/auth_role_menu.entity'
+import {JwtService} from '@nestjs/jwt'
+import {User} from '../entity/auth_user.entity'
 
 @Injectable()
 export class AdminService {
 
-  constructor(private readonly connection: Connection) {
+  constructor(private readonly connection: Connection,
+              private readonly jwtService: JwtService) {
+  }
+
+  // 登录
+  login(username) {
+    return this.connection.getRepository(User).findOne({
+      select: ['id', 'username', 'password', 'status'],
+      where: {username},
+    })
   }
 
   // 查询所有用户

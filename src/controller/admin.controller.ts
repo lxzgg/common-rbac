@@ -2,7 +2,14 @@ import {Body, Controller, Post} from '@nestjs/common'
 import {Resource} from '../common/decorator/resource.decorator'
 import {AdminService} from '../service/admin.service'
 import {success} from '../utils/result.util'
-import {captcha_err, captcha_expired, ErrorException, param_err} from '../common/exceptions/error.exception'
+import {
+  captcha_err,
+  captcha_expired,
+  ErrorException,
+  param_err,
+  password_err,
+  user_not_found,
+} from '../common/exceptions/error.exception'
 import {
   addRoleSchema,
   idSchema,
@@ -17,6 +24,7 @@ import {
 import {create, randomText} from 'svg-captcha'
 import {redis} from '../config/db.config'
 import {JwtService} from '@nestjs/jwt'
+import {compareSync} from 'bcryptjs'
 
 @Controller('admin')
 @Resource({name: '管理员操作', identify: 'admin:manage'})
@@ -35,7 +43,11 @@ export class AdminController {
     if (!captcha) throw new ErrorException(captcha_expired.code, captcha_expired.message)
     if (value.captcha.toUpperCase() !== captcha.toUpperCase()) throw new ErrorException(captcha_err.code, captcha_err.message)
 
-    const token = this.jwtService.sign({a: 1})
+    // const token = this.jwtService.sign({a: 1})
+    const user = await this.adminService.login(value.username)
+    if (user === undefined) throw new ErrorException(user_not_found.code, user_not_found.message)
+
+    if (!compareSync(value.password, user.password)) throw new ErrorException(password_err.code, password_err.message)
 
     return success()
   }

@@ -9,7 +9,6 @@ import {Resource} from './entity/auth_resource.entity'
 import {Permission} from './entity/auth_permission.entity'
 import {Role} from './entity/auth_role.entity'
 import {AuthService} from './service/auth.service'
-import {AuthController} from './controller/auth.controller'
 import {APP_GUARD, APP_INTERCEPTOR} from '@nestjs/core'
 import {AuthGuard} from './common/guard/auth.guard'
 import {AuthInterceptor} from './common/interceptor/auth.interceptor'
@@ -37,7 +36,6 @@ import {JwtModule} from '@nestjs/jwt'
   ],
   controllers: [
     AdminController,
-    AuthController,
     UserController,
   ],
   providers: [
