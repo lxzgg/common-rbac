@@ -5,61 +5,20 @@ import {Resource} from '../entity/auth_resource.entity'
 import {Role} from '../entity/auth_role.entity'
 import {RolePermission} from '../entity/auth_role_permission.entity'
 import {RoleMenu} from '../entity/auth_role_menu.entity'
-import {JwtService} from '@nestjs/jwt'
-import {User} from '../entity/auth_user.entity'
 
 @Injectable()
 export class AdminService {
 
-  constructor(private readonly connection: Connection,
-              private readonly jwtService: JwtService) {
+  constructor(private readonly connection: Connection) {
   }
 
-  // 登录
-  login(username) {
-    return this.connection.getRepository(User).findOne({
-      select: ['id', 'username', 'password', 'status'],
-      where: {username},
+  // 查询所有菜单
+  getMenuAll() {
+    return this.connection.getRepository(Menu).find({
+      where: {parent_id: 1},
+      relations: ['menus', 'menus.menus'],
+      cache: {id: 'getMenuAll', milliseconds: 60000},
     })
-  }
-
-  // 查询所有用户
-  getMenu() {
-    return this.connection.getRepository(Menu).find({where: {parent_id: 1}, relations: ['menus', 'menus.menus']})
-  }
-
-  // 查询角色所有菜单
-  async getRoleMenu(id) {
-    const result = await this.connection.getRepository(Role).findOne({where: {id}, relations: ['menus']})
-
-    const arr = result.menus
-
-    const menus = []
-
-    // 一级菜单
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].parent_id === 1) {
-        arr[i]['menus'] = []
-
-        // 二级菜单
-        for (let j = 0; j < arr.length; j++) {
-          if (arr[i].id === arr[j].parent_id) {
-            arr[j]['menus'] = []
-
-            // 三级菜单
-            for (let k = 0; k < arr.length; k++) {
-              if (arr[j].id === arr[k].parent_id) arr[j]['menus'].push(arr[k])
-            }
-
-            arr[i]['menus'].push(arr[j])
-          }
-        }
-
-        menus.push(arr[i])
-      }
-    }
-
-    return menus
   }
 
   getRoleMenuKeys(role_id) {
@@ -139,6 +98,10 @@ export class AdminService {
         await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).execute()
       }
     })
+  }
+
+  menuSort(menus) {
+    return this.connection.getRepository(Menu).save(menus)
   }
 
 }

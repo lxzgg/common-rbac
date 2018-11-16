@@ -8,9 +8,7 @@ import {WxModule} from './modules/wxModule/wx.module'
 import {Resource} from './entity/auth_resource.entity'
 import {Permission} from './entity/auth_permission.entity'
 import {Role} from './entity/auth_role.entity'
-import {AuthService} from './service/auth.service'
-import {APP_GUARD, APP_INTERCEPTOR} from '@nestjs/core'
-import {AuthGuard} from './common/guard/auth.guard'
+import {APP_INTERCEPTOR} from '@nestjs/core'
 import {AuthInterceptor} from './common/interceptor/auth.interceptor'
 import {MetadataScanner} from '@nestjs/core/metadata-scanner'
 import {Connection, In, Not} from 'typeorm'
@@ -23,6 +21,7 @@ import {Menu} from './entity/auth_menu.entity'
 import {AdminController} from './controller/admin.controller'
 import {AdminService} from './service/admin.service'
 import {JwtModule} from '@nestjs/jwt'
+import {UserRole} from './entity/auth_user_role.entity'
 
 @Module({
   imports: [
@@ -39,10 +38,6 @@ import {JwtModule} from '@nestjs/jwt'
     UserController,
   ],
   providers: [
-    {// 权限守卫
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
     {// 权限过期拦截器
       provide: APP_INTERCEPTOR,
       useClass: AuthInterceptor,
@@ -52,7 +47,6 @@ import {JwtModule} from '@nestjs/jwt'
       useClass: MsInterceptor,
     },
     AdminService,
-    AuthService,
     UserService,
   ],
 })
@@ -71,10 +65,9 @@ export class AppModule implements OnModuleInit {
   // 模块初始化
   async onModuleInit() {
     await this.loadResourcesAndPermissions()
-    await this.createDefaultRole()
     await this.createSuperAdmin()
+    await this.createDefaultRole()
     await this.initMenu()
-    await this.initRole()
   }
 
   /**
@@ -156,23 +149,31 @@ export class AppModule implements OnModuleInit {
   }
 
   /**
-   * 创建默认角色
-   */
-  private async createDefaultRole() {
-    const roleRepository = this.connection.getRepository(Role)
-    const role = await roleRepository.findOne(1)
-    if (role) return
-    await roleRepository.save({id: 1, name: 'admin'})
-  }
-
-  /**
-   * 创建超级管理员
+   * 创建超级管理员,和普通管理员
    */
   private async createSuperAdmin() {
     const userRepository = this.connection.getRepository(User)
-    const superAdmin = await userRepository.findOne(1)
-    if (superAdmin) return
+    // 超级管理员
     await userRepository.save({id: 1, username: 'admin', password: hashSync('admin')})
+
+    // 普通管理员
+    await userRepository.save({id: 2, username: 'admin1', password: hashSync('admin1')})
+  }
+
+  /**
+   * 创建管理员角色,用户角色
+   */
+  private async createDefaultRole() {
+    const roleRepository = this.connection.getRepository(Role)
+    const userRoleRepository = this.connection.getRepository(UserRole)
+    // 管理员角色
+    await roleRepository.save({id: 1, name: 'admin'})
+    await userRoleRepository.save({user_id: 2, role_id: 1})
+
+    // 用户角色
+    await roleRepository.save({id: 2, name: 'user'})
+    await userRoleRepository.save({user_id: 2, role_id: 2})
+
   }
 
   /**
@@ -181,56 +182,24 @@ export class AppModule implements OnModuleInit {
   private async initMenu() {
     const menuRepository = this.connection.getRepository(Menu)
     // 添加总菜单
-    await this.connection.getRepository(Menu).insert({name: '菜单'})
+    await menuRepository.save({id: 1, name: '菜单'})
     // 添加根菜单
-    const menu1 = await menuRepository.insert({
+    const menu1 = await menuRepository.save({
+      id: 2,
       name: '用户管理',
       url: '/user',
       icon: 'el-icon-bell',
       order: 0,
       parent_id: 1,
     })
-    const menu2 = await menuRepository.insert({
+    const menu2 = await menuRepository.save({
+      id: 3,
       name: '角色管理',
       url: '/role',
       icon: 'el-icon-bell',
       order: 0,
       parent_id: 1,
     })
-    const menu3 = await menuRepository.insert({
-      name: '权限管理',
-      url: '/access',
-      icon: 'el-icon-bell',
-      order: 0,
-      parent_id: 1,
-    })
-
-    await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu1.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理2', url: '/admin/user', parent_id: menu1.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu2.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理3', url: '/admin/user', parent_id: menu2.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理5', url: '/admin/user', parent_id: menu3.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理7', url: '/admin/user', parent_id: menu3.identifiers[0].id})
-    const pmenu3 = await menuRepository.insert({name: '用户管理1', url: '/admin/user', parent_id: menu3.identifiers[0].id})
-
-    await menuRepository.insert({name: '用户管理144', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理441', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
-    await menuRepository.insert({name: '用户管理156', url: '/admin/user', parent_id: pmenu3.identifiers[0].id})
-
-  }
-
-  /**
-   * 初始化角色
-   */
-  private async initRole() {
-    await this.connection.createQueryBuilder().insert().into(Role).values([
-      {name: '普通用户'},
-      {name: '会议用户'},
-      {name: '会⚪用户'},
-      {name: '超级用户'},
-      {name: '666用户'},
-      {name: '888用户'},
-    ]).execute()
   }
 
 }

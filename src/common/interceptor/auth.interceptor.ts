@@ -20,11 +20,9 @@ export class AuthInterceptor implements NestInterceptor {
         // 判断token离过期是否只剩指定时间
         const time = payload.exp - (Date.now() / 1000)
         // token过期时间剩余500秒则生成新的token
-        if (time < 500) data.token = this.jwtService.sign({id: payload.id})
+        if (time < 1800) data.token = this.jwtService.sign({id: payload.id})
       }
-
       return data
     }))
-
   }
 }

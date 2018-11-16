@@ -1,109 +1,58 @@
-import {Body, Controller, Post} from '@nestjs/common'
+import {Body, Controller, Post, UseGuards} from '@nestjs/common'
 import {Resource} from '../common/decorator/resource.decorator'
 import {AdminService} from '../service/admin.service'
 import {success} from '../utils/result.util'
 import {
-  captcha_err,
-  captcha_expired,
-  ErrorException,
-  param_err,
-  password_err,
-  user_not_found,
-} from '../common/exceptions/error.exception'
-import {
-  addRoleSchema,
-  idSchema,
-  keySchema,
-  loginSchema,
-  pageSchema,
-  roleAddAccessSchema,
-  roleAddMenuSchema,
-  roleIdSchema,
-  updateRoleSchema,
-} from '../schema/admin.schema'
-import {create, randomText} from 'svg-captcha'
-import {redis} from '../config/db.config'
-import {JwtService} from '@nestjs/jwt'
-import {compareSync} from 'bcryptjs'
+  addRoleVerify,
+  idVerify,
+  menuSortVerify,
+  pageVerify,
+  roleAddAccessVerify,
+  roleAddMenuVerify,
+  roleIdVerify,
+  updateRoleVerify,
+} from '../verify/admin.verify'
+import {Permission} from '../common/decorator/permission.decorator'
+import {AuthGuard} from '../common/guard/auth.guard'
+import {ErrorException, param_err} from '../common/exceptions/error.exception'
 
 @Controller('admin')
+@UseGuards(AuthGuard)
 @Resource({name: '管理员操作', identify: 'admin:manage'})
 export class AdminController {
 
-  constructor(private readonly adminService: AdminService,
-              private readonly jwtService: JwtService) {
-  }
-
-  @Post('login')
-  async login(@Body() body) {
-    const {value, error} = loginSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
-    const captcha = await redis.get(value.key)
-
-    if (!captcha) throw new ErrorException(captcha_expired.code, captcha_expired.message)
-    if (value.captcha.toUpperCase() !== captcha.toUpperCase()) throw new ErrorException(captcha_err.code, captcha_err.message)
-
-    // const token = this.jwtService.sign({a: 1})
-    const user = await this.adminService.login(value.username)
-    if (user === undefined) throw new ErrorException(user_not_found.code, user_not_found.message)
-
-    if (!compareSync(value.password, user.password)) throw new ErrorException(password_err.code, password_err.message)
-
-    return success()
-  }
-
-  @Post('captcha')
-  async captcha() {
-    const code = create({height: 40, color: true, ignoreChars: '0o1ig'})
-    const randomKey = randomText(30)
-    await redis.setex(randomKey, 60 * 3, code.text)
-    return success({key: randomKey, data: code.data})
-  }
-
-  @Post('newCaptcha')
-  async newCaptcha(@Body() body) {
-    const {value, error} = keySchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
-    const code = create({height: 40, color: true, ignoreChars: '0o1ig'})
-    await redis.setex(value.key, 60 * 3, code.text)
-    return success(code.data)
+  constructor(private readonly adminService: AdminService) {
   }
 
   // 查询所有菜单
-  @Post('getMenu')
-  async getMenu() {
-    return success(await this.adminService.getMenu())
-  }
-
-  // 查询角色已有菜单
-  @Post('getRoleMenu')
-  async getRoleMenu(@Body() body) {
-    const {value, error} = idSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
-    return success(await this.adminService.getRoleMenu(value.id))
+  @Post('getMenuAll')
+  @Permission({name: '查询所有菜单', identify: 'admin:getMenuAll'})
+  async getMenuAll() {
+    return success(await this.adminService.getMenuAll())
   }
 
   // 查询角色已有菜单ID
   @Post('getRoleMenuKeys')
+  @Permission({name: '查询角色已有菜单ID', identify: 'admin:getRoleMenuKeys'})
   async getRoleMenuKeys(@Body() body) {
-    const {value, error} = roleIdSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = roleIdVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     return success(await this.adminService.getRoleMenuKeys(value.role_id))
   }
 
   // 查询所有权限
   @Post('getAccess')
-  // @Permission({name: '查询角色', identify: 'access:get'})
+  @Permission({name: '查询所有权限', identify: 'admin:getAccess'})
   async getAccess() {
     return success(await this.adminService.getAccess())
   }
 
   // 查询所有角色
   @Post('getRole')
-  // @Permission({name: '查询角色', identify: 'role:get'})
+  @Permission({name: '查询所有角色', identify: 'admin:getRole'})
   async getRole(@Body() body) {
-    const {value, error} = pageSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = pageVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     const page = value.page
     const limit = value.limit
     const roles = await this.adminService.getRole(page, limit)
@@ -112,45 +61,48 @@ export class AdminController {
 
   // 添加角色
   @Post('addRole')
+  @Permission({name: '添加角色', identify: 'admin:addRole'})
   async addRole(@Body() body) {
-    const {value, error} = addRoleSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = addRoleVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     return success(await this.adminService.addRole(value.name))
   }
 
   // 修改角色
   @Post('updateRole')
+  @Permission({name: '修改角色', identify: 'admin:updateRole'})
   async updateRole(@Body() body) {
-    const {value, error} = updateRoleSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = updateRoleVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     await this.adminService.updateRole(value.id, value.name)
     return success()
   }
 
   // 删除角色
   @Post('delRole')
+  @Permission({name: '删除角色', identify: 'admin:delRole'})
   async delRole(@Body() body) {
-    const {value, error} = idSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = idVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     await this.adminService.delRole(value.id)
     return success()
   }
 
   // 查询角色已有权限
   @Post('getRoleAccess')
-  // @Permission({name: '查询权限', identify: 'roleAccess:get'})
+  @Permission({name: '查询角色已有权限', identify: 'admin:getRoleAccess'})
   async getRoleAccess(@Body() body) {
-    const {value, error} = roleIdSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = roleIdVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
     return success(await this.adminService.getRoleAccess(value.role_id))
   }
 
   // 角色添加权限
   @Post('roleAddAccess')
-  // @Permission({name: '查询权限', identify: 'roleAccess:get'})
+  @Permission({name: '角色添加权限', identify: 'admin:roleAddAccess'})
   async roleAddAccess(@Body() body) {
-    const {value, error} = roleAddAccessSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = roleAddAccessVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
 
     const role_id = value.role_id
     const permissions = value.permissions
@@ -160,13 +112,23 @@ export class AdminController {
 
   // 角色添加菜单
   @Post('roleAddMenu')
+  @Permission({name: '角色添加菜单', identify: 'admin:roleAddMenu'})
   async roleAddMenu(@Body() body) {
-    const {value, error} = roleAddMenuSchema.validate(body)
-    if (error) throw new ErrorException(param_err.code, error.details)
+    const {value, error} = roleAddMenuVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
 
     const role_id = value.role_id
     const menus = value.menus
 
     return success(await this.adminService.roleAddMenu(role_id, menus))
+  }
+
+  // 菜单管理
+  @Post('menuSort')
+  @Permission({name: '菜单管理', identify: 'admin:menuSort'})
+  async menuSort(@Body() body) {
+    const {value, error} = menuSortVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
+    return success(await this.adminService.menuSort(value.sort))
   }
 }

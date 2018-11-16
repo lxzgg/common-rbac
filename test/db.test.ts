@@ -1,6 +1,6 @@
 import {Connection, createConnection} from 'typeorm'
 import {Menu} from '../src/entity/auth_menu.entity'
-import {Role} from '../src/entity/auth_role.entity'
+import {User} from '../src/entity/auth_user.entity'
 
 describe('test', () => {
   let connection: Connection
@@ -39,45 +39,52 @@ describe('test', () => {
   })
 
   it('角色菜单', async () => {
-    const result = await connection.getRepository(Role).findOne({where: {id: 1}, relations: ['menus']})
 
-    const arr = result.menus
+    const result = await connection.getRepository(User).findOne(2, {
+      select: ['id'],
+      relations: ['roles', 'roles.menus'],
+    })
 
-    const menus = []
+    let arr: Menu[] = []
+    for (let i = 0; i < result.roles.length; i++) {
+      arr = arr.concat(result.roles[i].menus)
+    }
+
+    const arrId: any = []
+    const list: Menu[] = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!arrId.includes(arr[i].id)) {
+        arrId.push(arr[i].id)
+        list.push(arr[i])
+      }
+    }
+
+    const menus: Menu[] = []
 
     // 一级菜单
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].parent_id === 1) {
-        arr[i]['menus'] = []
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].parent_id === 1) {
+        list[i]['menus'] = []
 
         // 二级菜单
-        for (let j = 0; j < arr.length; j++) {
-          if (arr[i].id === arr[j].parent_id) {
-            arr[j]['menus'] = []
+        for (let j = 0; j < list.length; j++) {
+          if (list[i].id === list[j].parent_id) {
+            list[j]['menus'] = []
 
             // 三级菜单
-            for (let k = 0; k < arr.length; k++) {
-              if (arr[j].id === arr[k].parent_id) arr[j]['menus'].push(arr[k])
+            for (let k = 0; k < list.length; k++) {
+              if (list[j].id === list[k].parent_id) list[j]['menus'].push(list[k])
             }
 
-            arr[i]['menus'].push(arr[j])
+            list[i]['menus'].push(list[j])
           }
         }
 
-        menus.push(arr[i])
+        menus.push(list[i])
       }
     }
 
     console.log(JSON.stringify(menus, null, 2))
   })
-
-  it('should d', async () => {
-    const result = await connection.getRepository(Role).find({
-      where: {id: 1},
-      relations: ['menus'],
-    })
-    console.log(JSON.stringify(result, null, 2))
-  })
-
 
 })

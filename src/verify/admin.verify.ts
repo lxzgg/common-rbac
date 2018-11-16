@@ -1,25 +1,25 @@
 import {array, number, string} from 'joi'
-import {schema} from './common.schema'
+import {verify} from './common.verify'
 
 
 // 通用ID
-export const idSchema = schema.keys({
+export const idVerify = verify.keys({
   id: number().required(),
 })
 
 // 通用分页
-export const pageSchema = schema.keys({
+export const pageVerify = verify.keys({
   page: number().default(1),
   limit: number().default(10),
 })
 
 // 通用角色ID
-export const roleIdSchema = schema.keys({
+export const roleIdVerify = verify.keys({
   role_id: number().required(),
 })
 
 // 登录
-export const loginSchema = schema.keys({
+export const loginVerify = verify.keys({
   username: string().required(),
   password: string().required(),
   captcha: string().required(),
@@ -27,29 +27,34 @@ export const loginSchema = schema.keys({
 })
 
 // 验证码
-export const keySchema = schema.keys({
-  key: string().length(30).required(),
+export const keyVerify = verify.keys({
+  key: string().length(38).allow(''),
 })
 
 // 添加角色
-export const addRoleSchema = schema.keys({
+export const addRoleVerify = verify.keys({
   name: string().max(50).required(),
 })
 
 // 修改角色
-export const updateRoleSchema = schema.keys({
+export const updateRoleVerify = verify.keys({
   id: number().required(),
   name: string().max(50).required(),
 })
 
 // 角色添加权限
-export const roleAddAccessSchema = schema.keys({
+export const roleAddAccessVerify = verify.keys({
   role_id: number().required(),
   permissions: array().items(number()).required(),
 })
 
 // 角色添加菜单
-export const roleAddMenuSchema = schema.keys({
+export const roleAddMenuVerify = verify.keys({
   role_id: number().required(),
   menus: array().items(number()).required(),
+})
+
+// 菜单管理
+export const menuSortVerify = verify.keys({
+  sort: array().items({id: number(), order: number(), icon: string()}).required(),
 })

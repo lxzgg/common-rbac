@@ -4,27 +4,27 @@ import {number, object, string} from 'joi'
  * abortEarly 停止对第一个错误的验证，否则返回找到的所有错误。默认为true
  * allowUnknown 允许对象包含被忽略的未知键。默认为false。
  */
-const schema = object().options({abortEarly: false, allowUnknown: true})
+const verify = object().options({abortEarly: false, allowUnknown: true})
 
 // 微信支付
-export const paySchema = schema.keys({
+export const payVerify = verify.keys({
   order_sn: string().max(32).required(),
   total_fee: number().min(0.01).required(),
 })
 
 // 关闭订单
-export const closeOrderSchema = schema.keys({
+export const closeOrderVerify = verify.keys({
   out_trade_no: string().max(32).required(),
 })
 
 // 查询订单
-export const getOrderSchema = schema.keys({
+export const getOrderVerify = verify.keys({
   transaction_id: string().max(32).empty(''),
   out_trade_no: string().max(32).empty(''),
 }).or('transaction_id', 'out_trade_no')
 
 // 申请退款
-export const refundSchema = schema.keys({
+export const refundVerify = verify.keys({
   transaction_id: string().max(32).empty(''),
   out_trade_no: string().max(32).empty(''),
   out_refund_no: string().max(64).required(),
@@ -34,7 +34,7 @@ export const refundSchema = schema.keys({
 }).or('transaction_id', 'out_trade_no')
 
 // 申请退款
-export const refundQuerySchema = schema.keys({
+export const refundQueryVerify = verify.keys({
   transaction_id: string().max(32).empty(''),
   out_trade_no: string().max(32).empty(''),
   out_refund_no: string().max(64).empty(''),

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
@@ -20,16 +21,18 @@ export class User {
   @Column({length: 50, default: '', comment: '姓名'})
   name: string
 
-  @Column({length: 50, default: '', unique: true, comment: '账号'})
+  @Index()
+  @Column({length: 50, default: '', comment: '账号'})
   username: string
 
   @Column({length: 60, default: '', select: false, comment: '密码'})
   password: string
 
-  @Column({length: 50, default: '', unique: true, comment: '手机'})
+  @Index()
+  @Column({length: 50, default: '', comment: '手机'})
   mobile: string
 
-  @Column({length: 50, default: '', unique: true, comment: '邮箱'})
+  @Column({length: 50, default: '', comment: '邮箱'})
   email: string
 
   @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
