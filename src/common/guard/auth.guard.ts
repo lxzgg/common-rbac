@@ -14,7 +14,7 @@ import {Connection} from 'typeorm'
 import {redis} from '../../config/db.config'
 
 /**
- * 权限守卫
+ * 权限守卫(权限认证入口)
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
               private readonly jwtService: JwtService) {
   }
 
-  // token验证=>有没有限注解=>是否超级管理员=>权限验证
+  // token验证=>是否超级管理员=>有没权限注解=>权限验证
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
     const token = request.headers.authorization
     if (!token) throw new ErrorException(token_is_empty)
 
-    let payload
+    let payload = null
     try {
       // 验证token,获取用户信息
       payload = this.jwtService.verify(token)
@@ -41,15 +41,17 @@ export class AuthGuard implements CanActivate {
     // 用户信息放入request用户token过期判断
     request.payload = payload
 
+    //超级管理员不用权限验证
+    if (payload.id === 1) return true
+
     const permission: Permission = Reflect.getMetadata(PERMISSION_DEFINITION, context.getHandler())
     // 没有权限注解直接通过
     if (!permission) return true
 
-    //超级管理员不用权限验证
-    if (payload.id === 1) return true
+    // redis取权限,如为null则初始化数组
+    let userPermission: any = JSON.parse(await redis.get(`permissions_${payload.id}`)) || []
 
-    let userPermission: any = JSON.parse(await redis.get(`permission_${payload.id}`)) || []
-
+    // 权限数组有无值,没有则去数据库查询
     if (!userPermission.length) {
       // 数据库查询用户权限
       const user = await this.connection.getRepository(User).findOne(payload.id, {
@@ -61,13 +63,13 @@ export class AuthGuard implements CanActivate {
 
       user.roles.forEach(role => {
         role.permissions.forEach(permission => {
-          userPermission.push(permission.identify)
+          if (!userPermission.includes(permission.identify)) {
+            userPermission.push(permission.identify)
+          }
         })
       })
 
-      userPermission = [...new Set(userPermission)]
-
-      await redis.setex(`permission_${payload.id}`, 3600, JSON.stringify(userPermission))
+      await redis.setex(`permissions_${payload.id}`, 3600, JSON.stringify(userPermission))
     }
     // 验证用户是否有该权限
     if (!userPermission.includes(permission.identify)) throw new ErrorException(permission_denied)

@@ -15,11 +15,10 @@ export class AuthInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, call$: Observable<any>): Observable<any> | Promise<Observable<any>> {
     return call$.pipe(map(data => {
       const payload = context.switchToHttp().getRequest().payload
-
       if (payload) {
         // 判断token离过期是否只剩指定时间
         const time = payload.exp - (Date.now() / 1000)
-        // token过期时间剩余500秒则生成新的token
+        // token过期时间剩余30分钟则生成新的token
         if (time < 1800) data.token = this.jwtService.sign({id: payload.id})
       }
       return data

@@ -18,10 +18,16 @@ import {PERMISSION_DEFINITION} from './common/decorator/permission.decorator'
 import {hashSync} from 'bcryptjs'
 import {MsInterceptor} from './common/interceptor/ms.interceptor'
 import {Menu} from './entity/auth_menu.entity'
-import {AdminController} from './controller/admin.controller'
-import {AdminService} from './service/admin.service'
+import {RoleService} from './service/role.service'
 import {JwtModule} from '@nestjs/jwt'
 import {UserRole} from './entity/auth_user_role.entity'
+import {MenuController} from './controller/menu.controller'
+import {RoleController} from './controller/role.controller'
+import {MenuService} from './service/menu.service'
+import {CommonService} from './service/common.service'
+import {Organization} from './entity/auth_organization.entity'
+import {OrganizationController} from './controller/organization.controller'
+import {OrganizationService} from './service/organization.service'
 
 @Module({
   imports: [
@@ -34,7 +40,9 @@ import {UserRole} from './entity/auth_user_role.entity'
     WxModule,
   ],
   controllers: [
-    AdminController,
+    MenuController,
+    OrganizationController,
+    RoleController,
     UserController,
   ],
   providers: [
@@ -46,7 +54,10 @@ import {UserRole} from './entity/auth_user_role.entity'
       provide: APP_INTERCEPTOR,
       useClass: MsInterceptor,
     },
-    AdminService,
+    CommonService,
+    MenuService,
+    OrganizationService,
+    RoleService,
     UserService,
   ],
 })
@@ -68,6 +79,7 @@ export class AppModule implements OnModuleInit {
     await this.createSuperAdmin()
     await this.createDefaultRole()
     await this.initMenu()
+    await this.initOrganization()
   }
 
   /**
@@ -180,26 +192,45 @@ export class AppModule implements OnModuleInit {
    * 初始化菜单
    */
   private async initMenu() {
-    const menuRepository = this.connection.getRepository(Menu)
-    // 添加总菜单
-    await menuRepository.save({id: 1, name: '菜单'})
-    // 添加根菜单
-    const menu1 = await menuRepository.save({
-      id: 2,
-      name: '用户管理',
-      url: '/user',
-      icon: 'el-icon-bell',
-      order: 0,
-      parent_id: 1,
-    })
-    const menu2 = await menuRepository.save({
-      id: 3,
-      name: '角色管理',
-      url: '/role',
-      icon: 'el-icon-bell',
-      order: 0,
-      parent_id: 1,
-    })
+    const menuArray: Menu[] = []
+    // 根菜单
+    const menuRoot = new Menu()
+    menuRoot.id = 1
+    menuRoot.name = '菜单'
+    menuArray.push(menuRoot)
+
+    const menu1 = new Menu()
+    menu1.id = 2
+    menu1.name = '用户管理'
+    menu1.url = '/user'
+    menu1.parent_id = 1
+    menuArray.push(menu1)
+
+    const menu2 = new Menu()
+    menu2.id = 3
+    menu2.name = '组织管理'
+    menu2.url = '/organization'
+    menu2.parent_id = 1
+    menuArray.push(menu2)
+
+    const menu3 = new Menu()
+    menu3.id = 4
+    menu3.name = '角色管理'
+    menu3.url = '/role'
+    menu3.parent_id = 1
+    menuArray.push(menu3)
+
+    await Menu.save(menuArray)
+  }
+
+  /**
+   * 初始化组织
+   */
+  private async initOrganization() {
+    const organization = new Organization()
+    organization.id = 1
+    organization.name = '管理部'
+    await Organization.save(organization)
   }
 
 }

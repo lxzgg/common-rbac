@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -13,7 +14,7 @@ import {DateFormat} from '../utils/date.util'
 import {Organization} from './auth_organization.entity'
 
 @Entity('auth_user')
-export class User {
+export class User extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number

@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -12,12 +13,12 @@ import {DateFormat} from '../utils/date.util'
 import {User} from './auth_user.entity'
 
 @Entity('auth_organization')
-export class Organization {
+export class Organization extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', select: false, comment: '用户组名称'})
+  @Column({length: 50, default: '', comment: '用户组名称'})
   name: string
 
   @ManyToMany(() => User, user => user.organizations)

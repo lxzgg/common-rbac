@@ -1,8 +1,7 @@
-import {Body, Controller, Post} from '@nestjs/common'
+import {Body, Controller, Post, Req, UseGuards} from '@nestjs/common'
 import {success} from '../utils/result.util'
-import {idVerify, keyVerify, loginVerify} from '../verify/admin.verify'
+import {keyVerify, loginVerify} from '../verify/admin.verify'
 import {UserService} from '../service/user.service'
-import {AdminService} from '../service/admin.service'
 import {
   captcha_err,
   captcha_expired,
@@ -15,14 +14,12 @@ import {
 import {redis} from '../config/db.config'
 import {compareSync} from 'bcryptjs'
 import {JwtService} from '@nestjs/jwt'
-import {create, randomText} from 'svg-captcha'
-
+import {AuthGuard} from '../common/guard/auth.guard'
 
 @Controller('user')
 export class UserController {
 
   constructor(private readonly userService: UserService,
-              private readonly adminService: AdminService,
               private readonly jwtService: JwtService) {
   }
 
@@ -53,33 +50,20 @@ export class UserController {
     return success({id: user.id, token})
   }
 
+  // 验证码
   @Post('captcha')
   async captcha(@Body() body) {
     const {value, error} = keyVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
-
-    const code = create({height: 40, color: true, ignoreChars: '0o1ig'})
-    const randomKey = value.key || 'captcha_' + randomText(30)
-    await redis.setex(randomKey, 60, code.text)
-    return success({key: randomKey, data: code.data})
+    return success(await this.userService.captcha(value.key))
   }
 
-  // 查询用户所有菜单
-  @Post('getUserMenu')
-  async getUserMenu(@Body() body) {
-    const {value, error} = idVerify.validate(body)
-    if (error) throw new ErrorException(param_err, error.details)
-    if (value.id === 1) return success(await this.adminService.getMenuAll())
-    return success(await this.userService.getRoleMenu(value.id))
-  }
-
-  // 查询用户所有菜单
+  // 退出登录
   @Post('sign_out')
-  async sign_out(@Body() body) {
-    const {value, error} = idVerify.validate(body)
-    if (error) throw new ErrorException(param_err, error.details)
+  @UseGuards(AuthGuard)
+  async sign_out(@Req() req) {
     // 删除redis缓存的权限
-    await redis.del(`permission_${value.id}`)
+    await redis.del(`permissions_${req.payload.id}`)
     return success()
   }
 

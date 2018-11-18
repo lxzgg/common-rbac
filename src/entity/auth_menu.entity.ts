@@ -1,7 +1,7 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity('auth_menu')
-export class Menu {
+export class Menu extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number

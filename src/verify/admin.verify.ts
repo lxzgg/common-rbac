@@ -1,7 +1,6 @@
 import {array, number, string} from 'joi'
 import {verify} from './common.verify'
 
-
 // 通用ID
 export const idVerify = verify.keys({
   id: number().required(),
@@ -31,13 +30,13 @@ export const keyVerify = verify.keys({
   key: string().length(38).allow(''),
 })
 
-// 添加角色
-export const addRoleVerify = verify.keys({
+// 添加
+export const addNameVerify = verify.keys({
   name: string().max(50).required(),
 })
 
-// 修改角色
-export const updateRoleVerify = verify.keys({
+// 修改
+export const updateNameVerify = verify.keys({
   id: number().required(),
   name: string().max(50).required(),
 })

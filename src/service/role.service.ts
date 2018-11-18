@@ -1,53 +1,46 @@
 import {Injectable} from '@nestjs/common'
 import {Connection} from 'typeorm'
-import {Menu} from '../entity/auth_menu.entity'
 import {Resource} from '../entity/auth_resource.entity'
 import {Role} from '../entity/auth_role.entity'
 import {RolePermission} from '../entity/auth_role_permission.entity'
 import {RoleMenu} from '../entity/auth_role_menu.entity'
+import {CommonService} from './common.service'
 
 @Injectable()
-export class AdminService {
+export class RoleService {
 
-  constructor(private readonly connection: Connection) {
-  }
-
-  // 查询所有菜单
-  getMenuAll() {
-    return this.connection.getRepository(Menu).find({
-      where: {parent_id: 1},
-      relations: ['menus', 'menus.menus'],
-      cache: {id: 'getMenuAll', milliseconds: 60000},
-    })
-  }
-
-  getRoleMenuKeys(role_id) {
-    return this.connection.getRepository(RoleMenu).find({where: {role_id}, select: ['menu_id']})
+  constructor(private readonly connection: Connection,
+              private readonly commonService: CommonService) {
   }
 
   // 查询所有权限
-  getAccess() {
-    return this.connection.getRepository(Resource).find({relations: ['permissions']})
+  getAccessAll() {
+    return Resource.find({relations: ['permissions']})
   }
 
   // 添加角色
   addRole(name) {
-    return this.connection.getRepository(Role).save({name})
+    const role = new Role()
+    role.name = name
+    return role.save()
+  }
+
+  // 删除角色
+  async delRole(id) {
+    const result = await Role.delete(id)
+    const rows = result.raw.affectedRows
+    if (rows) this.commonService.clear_redis_permissions()
+    return rows
   }
 
   // 修改角色
   updateRole(id, name) {
-    return this.connection.getRepository(Role).update({id}, {name})
-  }
-
-  // 删除角色
-  delRole(id) {
-    return this.connection.getRepository(Role).delete(id)
+    return Role.update({id}, {name})
   }
 
   // 查询所有角色
-  async getRole(page, limit) {
-    return this.connection.getRepository(Role).findAndCount({
+  async getRoleAll(page, limit) {
+    return Role.findAndCount({
       select: ['id', 'name', 'createdAt', 'updatedAt'],
       skip: (page - 1) * limit,
       take: limit,
@@ -56,7 +49,7 @@ export class AdminService {
 
   // 查询角色已有权限
   async getRoleAccess(role_id) {
-    const roles = await this.connection.getRepository(RolePermission).find({where: {role_id}})
+    const roles = await RolePermission.find({where: {role_id}})
     const arr = []
     for (let i = 0; i < roles.length; i++) {
       arr.push(roles[i].permission_id)
@@ -64,7 +57,7 @@ export class AdminService {
     return arr
   }
 
-  // 角色更新权限
+  // 修改角色权限
   roleAddAccess(role_id, permissions) {
     const arr = []
     for (let i = 0; i < permissions.length; i++) {
@@ -79,10 +72,16 @@ export class AdminService {
       if (arr.length > 0) {
         await entityManager.createQueryBuilder().insert().into(RolePermission).values(arr).execute()
       }
+      this.commonService.clear_redis_permissions()
     })
   }
 
-  // 角色添加菜单
+  // 查询角色已有菜单ID
+  getRoleMenuKeys(role_id) {
+    return RoleMenu.find({where: {role_id}, select: ['menu_id']})
+  }
+
+  // 修改角色菜单
   roleAddMenu(role_id, menus) {
     const arr = []
     for (let i = 0; i < menus.length; i++) {
@@ -98,10 +97,6 @@ export class AdminService {
         await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).execute()
       }
     })
-  }
-
-  menuSort(menus) {
-    return this.connection.getRepository(Menu).save(menus)
   }
 
 }

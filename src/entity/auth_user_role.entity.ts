@@ -1,7 +1,7 @@
-import {Entity, PrimaryColumn} from 'typeorm'
+import {BaseEntity, Entity, PrimaryColumn} from 'typeorm'
 
 @Entity('auth_user_role')
-export class UserRole {
+export class UserRole extends BaseEntity {
 
   @PrimaryColumn()
   user_id: number

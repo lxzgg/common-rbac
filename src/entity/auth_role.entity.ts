@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -14,7 +15,7 @@ import {Organization} from './auth_organization.entity'
 import {Menu} from './auth_menu.entity'
 
 @Entity('auth_role')
-export class Role {
+export class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 

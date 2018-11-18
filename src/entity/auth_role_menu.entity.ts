@@ -1,7 +1,7 @@
-import {Entity, PrimaryColumn} from 'typeorm'
+import {BaseEntity, Entity, PrimaryColumn} from 'typeorm'
 
 @Entity('auth_role_menu')
-export class RoleMenu {
+export class RoleMenu extends BaseEntity {
 
   @PrimaryColumn()
   role_id: number

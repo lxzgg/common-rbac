@@ -6,4 +6,3 @@ import {object} from 'joi'
  * allowUnknown 允许对象包含被忽略的未知键。默认为false。
  */
 export const verify = object().options({abortEarly: false, allowUnknown: true})
-
