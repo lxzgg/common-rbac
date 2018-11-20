@@ -1,5 +1,5 @@
 {
-  "name": "nest-learn",
+  "name": "common-rbac",
   "version": "1.0.0",
   "main": "./src/main.ts",
   "repository": "https://github.com/lxzgg/nest-learn.git",
