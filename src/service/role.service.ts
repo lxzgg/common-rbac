@@ -39,7 +39,12 @@ export class RoleService {
   }
 
   // 查询所有角色
-  async getRoleAll(page, limit) {
+  async getRoleAll() {
+    return Role.find()
+  }
+
+  // 分页查询角色
+  async getRolePage(page, limit) {
     return Role.findAndCount({
       select: ['id', 'name', 'createdAt', 'updatedAt'],
       skip: (page - 1) * limit,

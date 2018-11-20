@@ -1,7 +1,7 @@
 import {Body, Controller, Post, Req, UseGuards} from '@nestjs/common'
 import {success} from '../utils/result.util'
 import {keyVerify, loginVerify} from '../verify/admin.verify'
-import {UserService} from '../service/user.service'
+import {LoginService} from '../service/login.service'
 import {
   captcha_err,
   captcha_expired,
@@ -16,15 +16,15 @@ import {compareSync} from 'bcryptjs'
 import {JwtService} from '@nestjs/jwt'
 import {AuthGuard} from '../common/guard/auth.guard'
 
-@Controller('user')
-export class UserController {
+@Controller('login')
+export class LoginController {
 
-  constructor(private readonly userService: UserService,
+  constructor(private readonly loginService: LoginService,
               private readonly jwtService: JwtService) {
   }
 
   // 登录
-  @Post('login')
+  @Post()
   async login(@Body() body) {
     const {value, error} = loginVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
@@ -37,17 +37,17 @@ export class UserController {
     // 验证码是否一致
     if (value.captcha.toUpperCase() !== captcha.toUpperCase()) throw new ErrorException(captcha_err)
     // 查询用户信息
-    const user = await this.userService.login(value.username)
+    const admin = await this.loginService.login(value.username)
     // 用户不存在
-    if (!user) throw new ErrorException(user_not_found)
+    if (!admin) throw new ErrorException(user_not_found)
     // 密码是否正确
-    if (!compareSync(value.password, user.password)) throw new ErrorException(password_err)
+    if (!compareSync(value.password, admin.password)) throw new ErrorException(password_err)
     // 账户是否锁定
-    if (!user.status) throw new ErrorException(user_locked)
+    if (!admin.status) throw new ErrorException(user_locked)
     // 生成token
-    const token = this.jwtService.sign({id: user.id})
+    const token = this.jwtService.sign({id: admin.id})
 
-    return success({id: user.id, token})
+    return success({id: admin.id, token})
   }
 
   // 验证码
@@ -55,7 +55,7 @@ export class UserController {
   async captcha(@Body() body) {
     const {value, error} = keyVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
-    return success(await this.userService.captcha(value.key))
+    return success(await this.loginService.captcha(value.key))
   }
 
   // 退出登录

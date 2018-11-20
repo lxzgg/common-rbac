@@ -1,18 +1,18 @@
 import {Injectable} from '@nestjs/common'
-import {User} from '../entity/auth_user.entity'
+import {Admin} from '../entity/auth_admin.entity'
 import {Connection} from 'typeorm'
 import {create, randomText} from 'svg-captcha'
 import {redis} from '../config/db.config'
 
 @Injectable()
-export class UserService {
+export class LoginService {
 
   constructor(private readonly connection: Connection) {
   }
 
   // 登录
   login(username) {
-    return this.connection.getRepository(User).findOne({
+    return this.connection.getRepository(Admin).findOne({
       select: ['id', 'username', 'password', 'status'],
       where: {username},
     })

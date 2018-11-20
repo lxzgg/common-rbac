@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
@@ -10,32 +11,42 @@ import {
 } from 'typeorm'
 import {Role} from './auth_role.entity'
 import {DateFormat} from '../utils/date.util'
-import {User} from './auth_user.entity'
+import {Group} from './auth_group.entity'
 
-@Entity('auth_organization')
-export class Organization extends BaseEntity {
+@Entity('auth_admin')
+export class Admin extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '用户组名称'})
+  @Column({length: 50, default: '', comment: '昵称'})
   name: string
 
-  @ManyToMany(() => User, user => user.organizations)
-  @JoinTable({
-    name: 'auth_organization_user',
-    joinColumn: {name: 'organization_id'},
-    inverseJoinColumn: {name: 'user_id'},
-  })
-  users: User[]
+  @Index()
+  @Column({length: 50, default: '', comment: '账号'})
+  username: string
 
-  @ManyToMany(() => Role, role => role.organizations)
+  @Column({length: 60, default: '', select: false, comment: '密码'})
+  password: string
+
+  @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
+  status: boolean
+
+  @ManyToMany(() => Role, role => role.admins)
   @JoinTable({
-    name: 'auth_organization_role',
-    joinColumn: {name: 'organization_id'},
+    name: 'auth_admin_role',
+    joinColumn: {name: 'admin_id'},
     inverseJoinColumn: {name: 'role_id'},
   })
   roles: Role[]
+
+  @ManyToMany(() => Group, group => group.admins)
+  @JoinTable({
+    name: 'auth_admin_group',
+    joinColumn: {name: 'admin_id'},
+    inverseJoinColumn: {name: 'group_id'},
+  })
+  groups: Group[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {
@@ -52,5 +63,4 @@ export class Organization extends BaseEntity {
     },
   })
   updatedAt: Date
-
 }

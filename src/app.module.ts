@@ -1,9 +1,9 @@
 import {HttpModule, Module, OnModuleInit} from '@nestjs/common'
 import {TypeOrmModule} from '@nestjs/typeorm'
-import {UserController} from './controller/user.controller'
-import {UserService} from './service/user.service'
+import {LoginController} from './controller/login.controller'
+import {LoginService} from './service/login.service'
 import {DBConfig} from './config/db.config'
-import {User} from './entity/auth_user.entity'
+import {Admin} from './entity/auth_admin.entity'
 import {WxModule} from './modules/wxModule/wx.module'
 import {Resource} from './entity/auth_resource.entity'
 import {Permission} from './entity/auth_permission.entity'
@@ -20,14 +20,18 @@ import {MsInterceptor} from './common/interceptor/ms.interceptor'
 import {Menu} from './entity/auth_menu.entity'
 import {RoleService} from './service/role.service'
 import {JwtModule} from '@nestjs/jwt'
-import {UserRole} from './entity/auth_user_role.entity'
+import {AdminRole} from './entity/auth_admin_role.entity'
 import {MenuController} from './controller/menu.controller'
 import {RoleController} from './controller/role.controller'
 import {MenuService} from './service/menu.service'
 import {CommonService} from './service/common.service'
-import {Organization} from './entity/auth_organization.entity'
-import {OrganizationController} from './controller/organization.controller'
-import {OrganizationService} from './service/organization.service'
+import {Group} from './entity/auth_group.entity'
+import {GroupController} from './controller/Group.controller'
+import {GroupService} from './service/Group.service'
+import {GroupRole} from './entity/auth_group_role.entity'
+import {AdminGroup} from './entity/auth_admin_group.entity'
+import {AdminController} from './controller/admin.controller'
+import {AdminService} from './service/admin.service'
 
 @Module({
   imports: [
@@ -40,10 +44,11 @@ import {OrganizationService} from './service/organization.service'
     WxModule,
   ],
   controllers: [
+    AdminController,
+    GroupController,
+    LoginController,
     MenuController,
-    OrganizationController,
     RoleController,
-    UserController,
   ],
   providers: [
     {// 权限过期拦截器
@@ -54,11 +59,12 @@ import {OrganizationService} from './service/organization.service'
       provide: APP_INTERCEPTOR,
       useClass: MsInterceptor,
     },
+    AdminService,
+    GroupService,
     CommonService,
+    LoginService,
     MenuService,
-    OrganizationService,
     RoleService,
-    UserService,
   ],
 })
 
@@ -79,7 +85,7 @@ export class AppModule implements OnModuleInit {
     await this.createSuperAdmin()
     await this.createDefaultRole()
     await this.initMenu()
-    await this.initOrganization()
+    await this.initGroup()
   }
 
   /**
@@ -164,28 +170,43 @@ export class AppModule implements OnModuleInit {
    * 创建超级管理员,和普通管理员
    */
   private async createSuperAdmin() {
-    const userRepository = this.connection.getRepository(User)
     // 超级管理员
-    await userRepository.save({id: 1, username: 'admin', password: hashSync('admin')})
+    const superAdmin = new Admin()
+    superAdmin.id = 1
+    superAdmin.name = '超级管理员'
+    superAdmin.username = 'admin'
+    superAdmin.password = hashSync('admin')
+    await superAdmin.save()
 
     // 普通管理员
-    await userRepository.save({id: 2, username: 'admin1', password: hashSync('admin1')})
+    const admin = new Admin()
+    admin.id = 2
+    admin.name = '普通管理员'
+    admin.username = 'user'
+    admin.password = hashSync('user')
+    await admin.save()
   }
 
   /**
    * 创建管理员角色,用户角色
    */
   private async createDefaultRole() {
-    const roleRepository = this.connection.getRepository(Role)
-    const userRoleRepository = this.connection.getRepository(UserRole)
     // 管理员角色
-    await roleRepository.save({id: 1, name: 'admin'})
-    await userRoleRepository.save({user_id: 2, role_id: 1})
+    const role = new Role()
+    role.id = 1
+    role.name = 'admin'
+    await role.save()
 
     // 用户角色
-    await roleRepository.save({id: 2, name: 'user'})
-    await userRoleRepository.save({user_id: 2, role_id: 2})
+    const user = new Role()
+    user.id = 2
+    user.name = 'user'
+    await user.save()
 
+    const userRole = new AdminRole()
+    userRole.admin_id = 2
+    userRole.role_id = 2
+    await userRole.save()
   }
 
   /**
@@ -201,15 +222,15 @@ export class AppModule implements OnModuleInit {
 
     const menu1 = new Menu()
     menu1.id = 2
-    menu1.name = '用户管理'
-    menu1.url = '/user'
+    menu1.name = '管理员管理'
+    menu1.url = '/admin'
     menu1.parent_id = 1
     menuArray.push(menu1)
 
     const menu2 = new Menu()
     menu2.id = 3
     menu2.name = '组织管理'
-    menu2.url = '/organization'
+    menu2.url = '/group'
     menu2.parent_id = 1
     menuArray.push(menu2)
 
@@ -226,11 +247,21 @@ export class AppModule implements OnModuleInit {
   /**
    * 初始化组织
    */
-  private async initOrganization() {
-    const organization = new Organization()
-    organization.id = 1
-    organization.name = '管理部'
-    await Organization.save(organization)
+  private async initGroup() {
+    const group = new Group()
+    group.id = 1
+    group.name = '管理部'
+    await group.save()
+
+    const groupRole = new GroupRole()
+    groupRole.group_id = 1
+    groupRole.role_id = 2
+    await groupRole.save()
+
+    const userGroup = new AdminGroup()
+    userGroup.admin_id = 2
+    userGroup.group_id = 1
+    await userGroup.save()
   }
 
 }

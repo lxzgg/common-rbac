@@ -1,10 +1,10 @@
 import {BaseEntity, Entity, PrimaryColumn} from 'typeorm'
 
-@Entity('auth_user_role')
-export class UserRole extends BaseEntity {
+@Entity('auth_group_role')
+export class GroupRole extends BaseEntity {
 
   @PrimaryColumn()
-  user_id: number
+  group_id: number
 
   @PrimaryColumn()
   role_id: number

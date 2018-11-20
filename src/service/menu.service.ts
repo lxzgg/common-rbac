@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common'
 import {Menu} from '../entity/auth_menu.entity'
-import {User} from '../entity/auth_user.entity'
+import {Admin} from '../entity/auth_admin.entity'
 import {ErrorException, user_not_found} from '../common/exceptions/error.exception'
 
 @Injectable()
@@ -17,18 +17,23 @@ export class MenuService {
 
   // 查询用户所有菜单
   async getRoleMenu(id) {
-    const result = await User.findOne(id, {
+    const result = await Admin.findOne(id, {
       select: ['id'],
-      relations: ['roles', 'roles.menus'],
+      relations: ['roles', 'roles.menus', 'groups', 'groups.roles', 'groups.roles.menus'],
     })
 
     if (!result) throw  new ErrorException(user_not_found)
 
     // 合并数组
     let arr: Menu[] = []
-    for (let i = 0; i < result.roles.length; i++) {
-      arr = arr.concat(result.roles[i].menus)
-    }
+    result.roles.forEach(role => {
+      arr = arr.concat(role.menus)
+    })
+    result.groups.forEach(Group => {
+      Group.roles.forEach(role => {
+        arr = arr.concat(role.menus)
+      })
+    })
 
     if (!arr.length) return []
 
@@ -64,6 +69,17 @@ export class MenuService {
         }
 
         menus.push(list[i])
+      }
+    }
+
+    // 冒泡排序(根据order排序)
+    for (let i = 0; i < menus.length; i++) {
+      for (let j = 0; j < menus.length; j++) {
+        if (menus[j + 1] && menus[j].order > menus[j + 1].order) {
+          const temp = menus[j]
+          menus[j] = menus[j + 1]
+          menus[j + 1] = temp
+        }
       }
     }
 

@@ -1,7 +1,6 @@
 import {Connection, createConnection} from 'typeorm'
 import {Menu} from '../src/entity/auth_menu.entity'
-import {User} from '../src/entity/auth_user.entity'
-import {Organization} from '../src/entity/auth_organization.entity'
+import {Admin} from '../src/entity/auth_admin.entity'
 
 describe('test', () => {
   let connection: Connection
@@ -31,24 +30,61 @@ describe('test', () => {
   })
 
   it('should user', async () => {
-    User.find().then(res => {
+    Admin.find().then(res => {
       console.log(res)
     })
   })
 
-  it('should s', function () {
-    connection.getRepository(Organization).find().then(res => {
-      console.log(res)
+  it('should roles', function () {
+    connection.getRepository(Admin).findOne(2, {
+      select: ['id'],
+      relations: ['roles', 'roles.permissions', 'groups', 'groups.roles', 'groups.roles.permissions'],
+    }).then(res => {
+
+
+      const userPermission = []
+
+      res.roles.forEach(role => {
+        role.permissions.forEach(permission => {
+          if (!userPermission.includes(permission.identify)) {
+            userPermission.push(permission.identify)
+          }
+        })
+      })
+      res.groups.forEach(Group => {
+        Group.roles.forEach(role => {
+          role.permissions.forEach(permission => {
+            if (!userPermission.includes(permission.identify)) {
+              userPermission.push(permission.identify)
+            }
+          })
+        })
+      })
+
+      console.log(JSON.stringify(res, null, 2))
+      console.log(JSON.stringify(userPermission, null, 2))
     })
   })
 
   it('查询所有菜单', async () => {
-    const result = await connection.getRepository(Menu).find({
-      where: {parent_id: 1},
-      select: ['id', 'name'],
-      relations: ['menus'],
+    const result = await connection.getRepository(Admin).findOne(2, {
+      select: ['id'],
+      relations: ['roles', 'roles.menus', 'groups', 'groups.roles', 'groups.roles.menus'],
     })
-    console.log(JSON.stringify(result, null, 2))
+
+    // 合并数组
+    let arr: Menu[] = []
+    result.roles.forEach(role => {
+      arr = arr.concat(role.menus)
+    })
+
+    result.groups.forEach(Group => {
+      Group.roles.forEach(role => {
+        arr = arr.concat(role.menus)
+      })
+    })
+
+    console.log(JSON.stringify(arr, null, 2))
   })
 
 })

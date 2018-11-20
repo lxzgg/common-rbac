@@ -9,16 +9,10 @@ import {MenuService} from '../service/menu.service'
 
 @Controller('menu')
 @UseGuards(AuthGuard)
-@Resource({name: '菜单管理', identify: 'menu:manage'})
+@Resource({name: '菜单管理', identify: 'manage:menu'})
 export class MenuController {
 
   constructor(private readonly menuService: MenuService) {
-  }
-
-  // 查询所有菜单
-  @Post('getMenuAll')
-  async getMenuAll() {
-    return success(await this.menuService.getMenuAll())
   }
 
   // 查询用户所有菜单
@@ -28,6 +22,13 @@ export class MenuController {
     if (error) throw new ErrorException(param_err, error.details)
     if (value.id === 1) return success(await this.menuService.getMenuAll())
     return success(await this.menuService.getRoleMenu(value.id))
+  }
+
+  // 查询所有菜单
+  @Post('getMenuAll')
+  @Permission({name: '查询菜单', identify: 'admin:getMenuAll'})
+  async getMenuAll() {
+    return success(await this.menuService.getMenuAll())
   }
 
   // 菜单管理

@@ -17,7 +17,7 @@ import {RoleService} from '../service/role.service'
 
 @Controller('role')
 @UseGuards(AuthGuard)
-@Resource({name: '角色管理', identify: 'role:manage'})
+@Resource({name: '角色管理', identify: 'manage:role'})
 export class RoleController {
 
   constructor(private readonly roleService: RoleService) {
@@ -36,10 +36,14 @@ export class RoleController {
   async getRoleAll(@Body() body) {
     const {value, error} = pageVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
-    const page = value.page
-    const limit = value.limit
-    const roles = await this.roleService.getRoleAll(page, limit)
-    return success({list: roles[0], total: roles[1], page, limit})
+    if (value.all) {
+      return success(await this.roleService.getRoleAll())
+    } else {
+      const page = value.page
+      const limit = value.limit
+      const roles = await this.roleService.getRolePage(page, limit)
+      return success({list: roles[0], total: roles[1], page, limit})
+    }
   }
 
   // 添加角色
@@ -81,7 +85,7 @@ export class RoleController {
 
   // 修改角色权限
   @Post('roleAddAccess')
-  @Permission({name: '修改角色权限', identify: 'role:roleAddAccess'})
+  @Permission({name: '修改权限', identify: 'role:roleAddAccess'})
   async roleAddAccess(@Body() body) {
     const {value, error} = roleAddAccessVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
@@ -102,7 +106,7 @@ export class RoleController {
 
   // 修改角色菜单
   @Post('roleAddMenu')
-  @Permission({name: '修改角色菜单', identify: 'role:roleAddMenu'})
+  @Permission({name: '修改菜单', identify: 'role:roleAddMenu'})
   async roleAddMenu(@Body() body) {
     const {value, error} = roleAddMenuVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)

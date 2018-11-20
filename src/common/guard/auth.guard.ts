@@ -9,7 +9,7 @@ import {
   token_is_empty,
   user_not_found,
 } from '../exceptions/error.exception'
-import {User} from '../../entity/auth_user.entity'
+import {Admin} from '../../entity/auth_admin.entity'
 import {Connection} from 'typeorm'
 import {redis} from '../../config/db.config'
 
@@ -18,6 +18,8 @@ import {redis} from '../../config/db.config'
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
+
+  private REDIS_PERMISSIONS = null
 
   constructor(private readonly connection: Connection,
               private readonly jwtService: JwtService) {
@@ -48,31 +50,50 @@ export class AuthGuard implements CanActivate {
     // 没有权限注解直接通过
     if (!permission) return true
 
+    this.REDIS_PERMISSIONS = `permissions_${payload.id}`
+
     // redis取权限,如为null则初始化数组
-    let userPermission: any = JSON.parse(await redis.get(`permissions_${payload.id}`)) || []
+    let adminPermissions: string[] = JSON.parse(await redis.get(this.REDIS_PERMISSIONS)) || []
 
     // 权限数组有无值,没有则去数据库查询
-    if (!userPermission.length) {
-      // 数据库查询用户权限
-      const user = await this.connection.getRepository(User).findOne(payload.id, {
-        select: ['id'],
-        relations: ['roles', 'roles.permissions'],
+    if (!adminPermissions.length) adminPermissions = await this.userPermissions(payload.id)
+
+    // 验证用户是否有该权限
+    if (!adminPermissions.includes(permission.identify)) throw new ErrorException(permission_denied)
+
+    return true
+  }
+
+  // 查询用户权限
+  async userPermissions(id) {
+    let adminPermissions: string[] = []
+    // 数据库查询用户权限
+    const user = await this.connection.getRepository(Admin).findOne(id, {
+      select: ['id'],
+      relations: ['roles', 'roles.permissions', 'groups', 'groups.roles', 'groups.roles.permissions'],
+    })
+
+    if (!user) throw new ErrorException(user_not_found)
+
+    user.roles.forEach(role => {
+      role.permissions.forEach(permission => {
+        if (!adminPermissions.includes(permission.identify)) {
+          adminPermissions.push(permission.identify)
+        }
       })
+    })
 
-      if (!user) throw new ErrorException(user_not_found)
-
-      user.roles.forEach(role => {
+    user.groups.forEach(Group => {
+      Group.roles.forEach(role => {
         role.permissions.forEach(permission => {
-          if (!userPermission.includes(permission.identify)) {
-            userPermission.push(permission.identify)
+          if (!adminPermissions.includes(permission.identify)) {
+            adminPermissions.push(permission.identify)
           }
         })
       })
+    })
 
-      await redis.setex(`permissions_${payload.id}`, 3600, JSON.stringify(userPermission))
-    }
-    // 验证用户是否有该权限
-    if (!userPermission.includes(permission.identify)) throw new ErrorException(permission_denied)
-    return true
+    await redis.setex(this.REDIS_PERMISSIONS, 3600, JSON.stringify(adminPermissions))
+    return adminPermissions
   }
 }

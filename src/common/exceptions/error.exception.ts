@@ -39,3 +39,7 @@ export const token_is_empty: Result = {code: 20004, message: '会话不存在', 
 export const token_has_expired: Result = {code: 20005, message: '登录已过期', status: HttpStatus.UNAUTHORIZED}
 
 export const permission_denied: Result = {code: 20006, message: '权限不足', status: HttpStatus.FORBIDDEN}
+
+export const user_already_exists: Result = {code: 20007, message: '用户已存在', status: HttpStatus.FORBIDDEN}
+
+export const access_denied: Result = {code: 20008, message: '拒绝访问', status: HttpStatus.FORBIDDEN}
