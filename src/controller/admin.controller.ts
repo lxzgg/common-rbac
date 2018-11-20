@@ -1,12 +1,14 @@
-import {Body, Controller, Post} from '@nestjs/common'
+import {Body, Controller, Post, UseGuards} from '@nestjs/common'
 import {Permission} from '../common/decorator/permission.decorator'
 import {Resource} from '../common/decorator/resource.decorator'
 import {AdminService} from '../service/admin.service'
 import {adminGroups, adminRoles, adminStatusVerify, adminVerify, idVerify, pageVerify} from '../verify/admin.verify'
 import {access_denied, ErrorException, param_err} from '../common/exceptions/error.exception'
 import {success} from '../utils/result.util'
+import {AuthGuard} from '../common/guard/auth.guard'
 
 @Controller('admin')
+@UseGuards(AuthGuard)
 @Resource({name: '管理员管理', identify: 'manage:admin'})
 export class AdminController {
 

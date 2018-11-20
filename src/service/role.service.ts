@@ -15,7 +15,7 @@ export class RoleService {
 
   // 查询所有权限
   getAccessAll() {
-    return Resource.find({relations: ['permissions']})
+    return Resource.find({relations: ['permissions'], cache: {id: 'getAccessAll', milliseconds: 60000}})
   }
 
   // 添加角色
@@ -40,7 +40,7 @@ export class RoleService {
 
   // 查询所有角色
   async getRoleAll() {
-    return Role.find()
+    return Role.find({cache: {id: 'getRoleAll', milliseconds: 60000}})
   }
 
   // 分页查询角色
@@ -49,12 +49,13 @@ export class RoleService {
       select: ['id', 'name', 'createdAt', 'updatedAt'],
       skip: (page - 1) * limit,
       take: limit,
+      cache: 60000,
     })
   }
 
   // 查询角色已有权限
   async getRoleAccess(role_id) {
-    const roles = await RolePermission.find({where: {role_id}})
+    const roles = await RolePermission.find({where: {role_id}, cache: 60000})
     const arr = []
     for (let i = 0; i < roles.length; i++) {
       arr.push(roles[i].permission_id)
@@ -83,7 +84,7 @@ export class RoleService {
 
   // 查询角色已有菜单ID
   getRoleMenuKeys(role_id) {
-    return RoleMenu.find({where: {role_id}, select: ['menu_id']})
+    return RoleMenu.find({where: {role_id}, select: ['menu_id'], cache: 60000})
   }
 
   // 修改角色菜单

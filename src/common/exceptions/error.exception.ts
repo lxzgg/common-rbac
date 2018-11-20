@@ -28,7 +28,9 @@ export const captcha_expired: Result = {code: 10002, message: '验证码过期',
 export const captcha_err: Result = {code: 10003, message: '验证码错误', status: HttpStatus.BAD_REQUEST}
 
 // 用户
-export const password_err: Result = {code: 20001, message: '密码错误', status: HttpStatus.BAD_REQUEST}
+export const password_err: Result = {code: 20000, message: '密码错误', status: HttpStatus.BAD_REQUEST}
+
+export const rawPassword_err: Result = {code: 20001, message: '原密码错误', status: HttpStatus.BAD_REQUEST}
 
 export const user_not_found: Result = {code: 20002, message: '用户不存在', status: HttpStatus.BAD_REQUEST}
 

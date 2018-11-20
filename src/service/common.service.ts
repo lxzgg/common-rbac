@@ -12,8 +12,13 @@ export class CommonService {
   }
 
   // 清除管理员redis缓存的权限
-  clear_admin_redis_permissions(id) {
+  clear_redis_admin_permissions(id) {
     redis.del(`permissions_${id}`)
+  }
+
+  // 清除管理员redis缓存的密码版本
+  clear_redis_password_version(id) {
+    redis.del(`password_version_${id}`)
   }
 
 }

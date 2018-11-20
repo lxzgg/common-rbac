@@ -20,6 +20,7 @@ export class AdminService {
       select: ['id', 'name', 'username', 'status', 'createdAt', 'updatedAt'],
       skip: (page - 1) * limit,
       take: limit,
+      cache: 60000,
     })
   }
 
@@ -80,7 +81,7 @@ export class AdminService {
       if (arr.length > 0) {
         await entityManager.createQueryBuilder().insert().into(AdminGroup).values(arr).execute()
       }
-      this.commonService.clear_admin_redis_permissions(admin_id)
+      this.commonService.clear_redis_admin_permissions(admin_id)
     })
   }
 
@@ -104,7 +105,7 @@ export class AdminService {
       if (arr.length > 0) {
         await entityManager.createQueryBuilder().insert().into(AdminRole).values(arr).execute()
       }
-      this.commonService.clear_admin_redis_permissions(admin_id)
+      this.commonService.clear_redis_admin_permissions(admin_id)
     })
   }
 

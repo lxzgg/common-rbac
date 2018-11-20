@@ -13,7 +13,7 @@ export class GroupService {
 
   // 查询所有组织
   getGroupAll() {
-    return Group.find()
+    return Group.find({cache: 60000})
   }
 
   // 分页查询组织
@@ -22,6 +22,7 @@ export class GroupService {
       select: ['id', 'name', 'createdAt', 'updatedAt'],
       skip: (page - 1) * limit,
       take: limit,
+      cache: 60000,
     })
   }
 

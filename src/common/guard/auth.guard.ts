@@ -18,8 +18,10 @@ import {redis} from '../../config/db.config'
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
-
+  // 缓存权限
   private REDIS_PERMISSIONS = null
+  // 缓存密码版本
+  private REDIS_PASSWORD_VERSION = null
 
   constructor(private readonly connection: Connection,
               private readonly jwtService: JwtService) {
@@ -42,6 +44,18 @@ export class AuthGuard implements CanActivate {
     }
     // 用户信息放入request用户token过期判断
     request.payload = payload
+
+    this.REDIS_PASSWORD_VERSION = `password_version_${payload.id}`
+
+    let password_version: any = await redis.get(this.REDIS_PASSWORD_VERSION)
+
+    if (!password_version) {
+      const adminVersion = await Admin.findOne(payload.id, {select: ['version']})
+      password_version = adminVersion.version
+      await redis.setex(this.REDIS_PASSWORD_VERSION, 3600, adminVersion.version)
+    }
+
+    if (Number(payload.version) !== Number(password_version)) throw new ErrorException(token_has_expired)
 
     //超级管理员不用权限验证
     if (payload.id === 1) return true
@@ -68,14 +82,14 @@ export class AuthGuard implements CanActivate {
   async userPermissions(id) {
     let adminPermissions: string[] = []
     // 数据库查询用户权限
-    const user = await this.connection.getRepository(Admin).findOne(id, {
+    const admin = await Admin.findOne(id, {
       select: ['id'],
       relations: ['roles', 'roles.permissions', 'groups', 'groups.roles', 'groups.roles.permissions'],
     })
 
-    if (!user) throw new ErrorException(user_not_found)
+    if (!admin) throw new ErrorException(user_not_found)
 
-    user.roles.forEach(role => {
+    admin.roles.forEach(role => {
       role.permissions.forEach(permission => {
         if (!adminPermissions.includes(permission.identify)) {
           adminPermissions.push(permission.identify)
@@ -83,7 +97,7 @@ export class AuthGuard implements CanActivate {
       })
     })
 
-    user.groups.forEach(Group => {
+    admin.groups.forEach(Group => {
       Group.roles.forEach(role => {
         role.permissions.forEach(permission => {
           if (!adminPermissions.includes(permission.identify)) {

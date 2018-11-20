@@ -20,7 +20,7 @@ export const DBConfig: TypeOrmModuleOptions = {
     '*/entity/**.entity{.ts,.js}',
     'entity/**.entity{.ts,.js}',
   ],
-  cache: {type: 'redis', options: redisConfig, duration: 60000},
+  // cache: {type: 'redis', options: redisConfig, duration: 60000},
   // 每次建立连接时删除架构
   dropSchema: true,
   // 每次启动应用程序时自动创建数据库架构

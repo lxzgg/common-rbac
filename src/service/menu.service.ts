@@ -12,6 +12,7 @@ export class MenuService {
       where: {parent_id: 1},
       order: {order: 'ASC'},
       relations: ['menus', 'menus.menus'],
+      cache: {id: 'getMenuAll', milliseconds: 60000},
     })
   }
 
@@ -20,6 +21,7 @@ export class MenuService {
     const result = await Admin.findOne(id, {
       select: ['id'],
       relations: ['roles', 'roles.menus', 'groups', 'groups.roles', 'groups.roles.menus'],
+      cache: 60000,
     })
 
     if (!result) throw  new ErrorException(user_not_found)

@@ -8,6 +8,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from 'typeorm'
 import {Role} from './auth_role.entity'
 import {DateFormat} from '../utils/date.util'
@@ -31,6 +32,9 @@ export class Admin extends BaseEntity {
 
   @Column({default: true, width: 1, comment: '封禁状态 1.有效 0:无效'})
   status: boolean
+
+  @VersionColumn({comment: '信息版本'})
+  version: number
 
   @ManyToMany(() => Role, role => role.admins)
   @JoinTable({

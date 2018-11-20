@@ -224,6 +224,7 @@ export class AppModule implements OnModuleInit {
     menu1.id = 2
     menu1.name = '管理员管理'
     menu1.url = '/admin'
+    menu1.icon = 'icon-admin'
     menu1.parent_id = 1
     menuArray.push(menu1)
 
@@ -231,6 +232,7 @@ export class AppModule implements OnModuleInit {
     menu2.id = 3
     menu2.name = '组织管理'
     menu2.url = '/group'
+    menu2.icon = 'icon-role'
     menu2.parent_id = 1
     menuArray.push(menu2)
 
@@ -238,6 +240,7 @@ export class AppModule implements OnModuleInit {
     menu3.id = 4
     menu3.name = '角色管理'
     menu3.url = '/role'
+    menu3.icon = 'icon-access'
     menu3.parent_id = 1
     menuArray.push(menu3)
 

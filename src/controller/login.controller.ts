@@ -1,8 +1,9 @@
 import {Body, Controller, Post, Req, UseGuards} from '@nestjs/common'
 import {success} from '../utils/result.util'
-import {keyVerify, loginVerify} from '../verify/admin.verify'
+import {keyVerify, loginVerify, updatePasswordVerify} from '../verify/admin.verify'
 import {LoginService} from '../service/login.service'
 import {
+  access_denied,
   captcha_err,
   captcha_expired,
   ErrorException,
@@ -45,7 +46,9 @@ export class LoginController {
     // 账户是否锁定
     if (!admin.status) throw new ErrorException(user_locked)
     // 生成token
-    const token = this.jwtService.sign({id: admin.id})
+    const token = this.jwtService.sign({id: admin.id, version: admin.version})
+
+    await redis.setex(`password_version_${admin.id}`, 3600, admin.version)
 
     return success({id: admin.id, token})
   }
@@ -65,6 +68,16 @@ export class LoginController {
     // 删除redis缓存的权限
     await redis.del(`permissions_${req.payload.id}`)
     return success()
+  }
+
+  // 修改密码
+  @Post('updatePassword')
+  @UseGuards(AuthGuard)
+  async updatePassword(@Req() req, @Body() body) {
+    const {value, error} = updatePasswordVerify.validate(body)
+    if (error) throw new ErrorException(param_err, error.details)
+    if (req.payload.id !== value.id) throw new ErrorException(access_denied)
+    return success(await this.loginService.updatePassword(value))
   }
 
 }

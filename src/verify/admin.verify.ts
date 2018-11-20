@@ -90,3 +90,10 @@ export const adminStatusVerify = verify.keys({
   id: number().required(),
   status: boolean().required(),
 })
+
+// 修改密码
+export const updatePasswordVerify = verify.keys({
+  id: number().required(),
+  rawPassword: string().required(),
+  newPassword: string().required(),
+})
