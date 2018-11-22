@@ -79,6 +79,7 @@ export class AuthRoleService {
         await entityManager.createQueryBuilder().insert().into(RolePermission).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_permissions()
+      return true
     })
   }
 
@@ -102,6 +103,7 @@ export class AuthRoleService {
       if (arr.length > 0) {
         await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).updateEntity(false).execute()
       }
+      return true
     })
   }
 

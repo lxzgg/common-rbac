@@ -82,6 +82,7 @@ export class AuthAdminService {
         await entityManager.createQueryBuilder().insert().into(AdminGroup).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_admin_permissions(admin_id)
+      return true
     })
   }
 
@@ -106,6 +107,7 @@ export class AuthAdminService {
         await entityManager.createQueryBuilder().insert().into(AdminRole).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_admin_permissions(admin_id)
+      return true
     })
   }
 

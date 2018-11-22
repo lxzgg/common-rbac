@@ -67,6 +67,7 @@ export class AuthGroupService {
         await entityManager.createQueryBuilder().insert().into(GroupRole).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_permissions()
+      return true
     })
   }
 
