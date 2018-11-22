@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common'
-import {Admin} from '../entity/auth_admin.entity'
+import {Admin} from '../entity/auth.admin.entity'
 import {create, randomText} from 'svg-captcha'
 import {redis} from '../config/db.config'
 import {compareSync, hashSync} from 'bcryptjs'
@@ -7,7 +7,7 @@ import {ErrorException, rawPassword_err} from '../common/exceptions/error.except
 import {CommonService} from './common.service'
 
 @Injectable()
-export class LoginService {
+export class AuthLoginService {
 
   constructor(private readonly commonService: CommonService) {
   }

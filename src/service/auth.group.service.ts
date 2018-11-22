@@ -1,11 +1,11 @@
 import {Injectable} from '@nestjs/common'
 import {CommonService} from './common.service'
 import {Connection} from 'typeorm'
-import {Group} from '../entity/auth_group.entity'
-import {GroupRole} from '../entity/auth_group_role.entity'
+import {Group} from '../entity/auth.group.entity'
+import {GroupRole} from '../entity/auth.group_role.entity'
 
 @Injectable()
-export class GroupService {
+export class AuthGroupService {
 
   constructor(private readonly connection: Connection,
               private readonly commonService: CommonService) {
@@ -64,7 +64,7 @@ export class GroupService {
     return this.connection.transaction(async entityManager => {
       await entityManager.getRepository(GroupRole).delete({group_id})
       if (arr.length > 0) {
-        await entityManager.createQueryBuilder().insert().into(GroupRole).values(arr).execute()
+        await entityManager.createQueryBuilder().insert().into(GroupRole).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_permissions()
     })

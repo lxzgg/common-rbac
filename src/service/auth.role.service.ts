@@ -1,13 +1,13 @@
 import {Injectable} from '@nestjs/common'
 import {Connection} from 'typeorm'
-import {Resource} from '../entity/auth_resource.entity'
-import {Role} from '../entity/auth_role.entity'
-import {RolePermission} from '../entity/auth_role_permission.entity'
-import {RoleMenu} from '../entity/auth_role_menu.entity'
+import {Resource} from '../entity/auth.resource.entity'
+import {Role} from '../entity/auth.role.entity'
+import {RolePermission} from '../entity/auth.role_permission.entity'
+import {RoleMenu} from '../entity/auth.role_menu.entity'
 import {CommonService} from './common.service'
 
 @Injectable()
-export class RoleService {
+export class AuthRoleService {
 
   constructor(private readonly connection: Connection,
               private readonly commonService: CommonService) {
@@ -76,7 +76,7 @@ export class RoleService {
     return this.connection.transaction(async entityManager => {
       await entityManager.getRepository(RolePermission).delete({role_id})
       if (arr.length > 0) {
-        await entityManager.createQueryBuilder().insert().into(RolePermission).values(arr).execute()
+        await entityManager.createQueryBuilder().insert().into(RolePermission).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_permissions()
     })
@@ -100,7 +100,7 @@ export class RoleService {
     return this.connection.transaction(async entityManager => {
       await entityManager.getRepository(RoleMenu).delete({role_id})
       if (arr.length > 0) {
-        await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).execute()
+        await entityManager.createQueryBuilder().insert().into(RoleMenu).values(arr).updateEntity(false).execute()
       }
     })
   }

@@ -1,6 +1,6 @@
 import {CanActivate, ExecutionContext, Injectable} from '@nestjs/common'
 import {PERMISSION_DEFINITION} from '../decorator/permission.decorator'
-import {Permission} from '../../entity/auth_permission.entity'
+import {Permission} from '../../entity/auth.permission.entity'
 import {JwtService} from '@nestjs/jwt'
 import {
   ErrorException,
@@ -9,7 +9,7 @@ import {
   token_is_empty,
   user_not_found,
 } from '../exceptions/error.exception'
-import {Admin} from '../../entity/auth_admin.entity'
+import {Admin} from '../../entity/auth.admin.entity'
 import {Connection} from 'typeorm'
 import {redis} from '../../config/db.config'
 

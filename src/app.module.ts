@@ -1,13 +1,13 @@
 import {HttpModule, Module, OnModuleInit} from '@nestjs/common'
 import {TypeOrmModule} from '@nestjs/typeorm'
-import {LoginController} from './controller/login.controller'
-import {LoginService} from './service/login.service'
+import {AuthLoginController} from './controller/auth.login.controller'
+import {AuthLoginService} from './service/auth.login.service'
 import {DBConfig} from './config/db.config'
-import {Admin} from './entity/auth_admin.entity'
+import {Admin} from './entity/auth.admin.entity'
 import {WxModule} from './modules/wxModule/wx.module'
-import {Resource} from './entity/auth_resource.entity'
-import {Permission} from './entity/auth_permission.entity'
-import {Role} from './entity/auth_role.entity'
+import {Resource} from './entity/auth.resource.entity'
+import {Permission} from './entity/auth.permission.entity'
+import {Role} from './entity/auth.role.entity'
 import {APP_INTERCEPTOR} from '@nestjs/core'
 import {AuthInterceptor} from './common/interceptor/auth.interceptor'
 import {MetadataScanner} from '@nestjs/core/metadata-scanner'
@@ -17,21 +17,21 @@ import {RESOURCE_DEFINITION} from './common/decorator/resource.decorator'
 import {PERMISSION_DEFINITION} from './common/decorator/permission.decorator'
 import {hashSync} from 'bcryptjs'
 import {MsInterceptor} from './common/interceptor/ms.interceptor'
-import {Menu} from './entity/auth_menu.entity'
-import {RoleService} from './service/role.service'
+import {Menu} from './entity/auth.menu.entity'
+import {AuthRoleService} from './service/auth.role.service'
 import {JwtModule} from '@nestjs/jwt'
-import {AdminRole} from './entity/auth_admin_role.entity'
-import {MenuController} from './controller/menu.controller'
-import {RoleController} from './controller/role.controller'
-import {MenuService} from './service/menu.service'
+import {AdminRole} from './entity/auth.admin_role.entity'
+import {AuthMenuController} from './controller/auth.menu.controller'
+import {AuthRoleController} from './controller/auth.role.controller'
+import {AuthMenuService} from './service/auth.menu.service'
 import {CommonService} from './service/common.service'
-import {Group} from './entity/auth_group.entity'
-import {GroupController} from './controller/Group.controller'
-import {GroupService} from './service/Group.service'
-import {GroupRole} from './entity/auth_group_role.entity'
-import {AdminGroup} from './entity/auth_admin_group.entity'
-import {AdminController} from './controller/admin.controller'
-import {AdminService} from './service/admin.service'
+import {Group} from './entity/auth.group.entity'
+import {AuthGroupController} from './controller/auth.group.controller'
+import {AuthGroupService} from './service/auth.group.service'
+import {GroupRole} from './entity/auth.group_role.entity'
+import {AdminGroup} from './entity/auth.admin_group.entity'
+import {AuthAdminController} from './controller/auth.admin.controller'
+import {AuthAdminService} from './service/auth.admin.service'
 
 @Module({
   imports: [
@@ -44,11 +44,11 @@ import {AdminService} from './service/admin.service'
     WxModule,
   ],
   controllers: [
-    AdminController,
-    GroupController,
-    LoginController,
-    MenuController,
-    RoleController,
+    AuthAdminController,
+    AuthGroupController,
+    AuthLoginController,
+    AuthMenuController,
+    AuthRoleController,
   ],
   providers: [
     {// 权限过期拦截器
@@ -59,12 +59,12 @@ import {AdminService} from './service/admin.service'
       provide: APP_INTERCEPTOR,
       useClass: MsInterceptor,
     },
-    AdminService,
-    GroupService,
+    AuthAdminService,
+    AuthGroupService,
     CommonService,
-    LoginService,
-    MenuService,
-    RoleService,
+    AuthLoginService,
+    AuthMenuService,
+    AuthRoleService,
   ],
 })
 

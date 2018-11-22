@@ -1,5 +1,5 @@
 import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
-import {Permission} from './auth_permission.entity'
+import {Permission} from './auth.permission.entity'
 
 @Entity('auth_resource')
 export class Resource extends BaseEntity {

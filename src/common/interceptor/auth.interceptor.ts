@@ -15,7 +15,8 @@ export class AuthInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, call$: Observable<any>): Observable<any> | Promise<Observable<any>> {
     return call$.pipe(map(data => {
       const payload = context.switchToHttp().getRequest().payload
-      if (payload) {
+      // 只延长后台(其他端没version)
+      if (payload && payload.version) {
         // 判断token离过期是否只剩指定时间
         const time = payload.exp - (Date.now() / 1000)
         // token过期时间剩余30分钟则生成新的token
@@ -24,4 +25,5 @@ export class AuthInterceptor implements NestInterceptor {
       return data
     }))
   }
+
 }

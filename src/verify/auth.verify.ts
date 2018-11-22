@@ -78,7 +78,7 @@ export const adminRoles = verify.keys({
 })
 
 // 创建管理员
-export const adminVerify = verify.keys({
+export const authVerify = verify.keys({
   id: number(),
   name: string().max(50).required(),
   username: string().max(50).required(),

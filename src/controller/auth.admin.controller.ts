@@ -1,8 +1,8 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common'
 import {Permission} from '../common/decorator/permission.decorator'
 import {Resource} from '../common/decorator/resource.decorator'
-import {AdminService} from '../service/admin.service'
-import {adminGroups, adminRoles, adminStatusVerify, adminVerify, idVerify, pageVerify} from '../verify/admin.verify'
+import {AuthAdminService} from '../service/auth.admin.service'
+import {adminGroups, adminRoles, adminStatusVerify, authVerify, idVerify, pageVerify} from '../verify/auth.verify'
 import {access_denied, ErrorException, param_err} from '../common/exceptions/error.exception'
 import {success} from '../utils/result.util'
 import {AuthGuard} from '../common/guard/auth.guard'
@@ -10,9 +10,9 @@ import {AuthGuard} from '../common/guard/auth.guard'
 @Controller('admin')
 @UseGuards(AuthGuard)
 @Resource({name: '管理员管理', identify: 'manage:admin'})
-export class AdminController {
+export class AuthAdminController {
 
-  constructor(private readonly adminService: AdminService) {
+  constructor(private readonly adminService: AuthAdminService) {
   }
 
   // 查询管理员
@@ -42,7 +42,7 @@ export class AdminController {
   @Post('addAdmin')
   @Permission({name: '创建管理', identify: 'admin:addAdmin'})
   async addAdmin(@Body() body) {
-    const {value, error} = adminVerify.validate(body)
+    const {value, error} = authVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
     return success(await this.adminService.addAdmin(value))
   }
@@ -61,7 +61,7 @@ export class AdminController {
   @Post('updateAdmin')
   @Permission({name: '修改管理', identify: 'admin:updateAdmin'})
   async updateAdmin(@Body() body) {
-    const {value, error} = adminVerify.validate(body)
+    const {value, error} = authVerify.validate(body)
     if (error) throw new ErrorException(param_err, error.details)
     if (!value.id || value.id === 1) throw new ErrorException(access_denied)
     return success(await this.adminService.updateAdmin(value))

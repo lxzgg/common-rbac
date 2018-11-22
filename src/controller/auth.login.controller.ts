@@ -1,7 +1,7 @@
 import {Body, Controller, Post, Req, UseGuards} from '@nestjs/common'
 import {success} from '../utils/result.util'
-import {keyVerify, loginVerify, updatePasswordVerify} from '../verify/admin.verify'
-import {LoginService} from '../service/login.service'
+import {keyVerify, loginVerify, updatePasswordVerify} from '../verify/auth.verify'
+import {AuthLoginService} from '../service/auth.login.service'
 import {
   access_denied,
   captcha_err,
@@ -18,9 +18,9 @@ import {JwtService} from '@nestjs/jwt'
 import {AuthGuard} from '../common/guard/auth.guard'
 
 @Controller('login')
-export class LoginController {
+export class AuthLoginController {
 
-  constructor(private readonly loginService: LoginService,
+  constructor(private readonly loginService: AuthLoginService,
               private readonly jwtService: JwtService) {
   }
 

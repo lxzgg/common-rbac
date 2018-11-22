@@ -1,6 +1,6 @@
 import {Connection, createConnection} from 'typeorm'
-import {Menu} from '../src/entity/auth_menu.entity'
-import {Admin} from '../src/entity/auth_admin.entity'
+import {Menu} from '../src/entity/auth.menu.entity'
+import {Admin} from '../src/entity/auth.admin.entity'
 
 describe('test', () => {
   let connection: Connection

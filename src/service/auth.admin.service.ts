@@ -1,14 +1,14 @@
 import {Injectable} from '@nestjs/common'
-import {Admin} from '../entity/auth_admin.entity'
+import {Admin} from '../entity/auth.admin.entity'
 import {ErrorException, user_already_exists} from '../common/exceptions/error.exception'
 import {hashSync} from 'bcryptjs'
-import {AdminGroup} from '../entity/auth_admin_group.entity'
-import {AdminRole} from '../entity/auth_admin_role.entity'
+import {AdminGroup} from '../entity/auth.admin_group.entity'
+import {AdminRole} from '../entity/auth.admin_role.entity'
 import {Connection} from 'typeorm'
 import {CommonService} from './common.service'
 
 @Injectable()
-export class AdminService {
+export class AuthAdminService {
 
   constructor(private readonly connection: Connection,
               private readonly commonService: CommonService) {
@@ -62,7 +62,7 @@ export class AdminService {
   }
 
   // 获取管理员组织
-  async getAdminGroups(id) {
+  getAdminGroups(id) {
     return AdminGroup.find({where: {admin_id: id}, select: ['group_id']})
   }
 
@@ -79,14 +79,14 @@ export class AdminService {
     return this.connection.transaction(async entityManager => {
       await entityManager.getRepository(AdminGroup).delete({admin_id})
       if (arr.length > 0) {
-        await entityManager.createQueryBuilder().insert().into(AdminGroup).values(arr).execute()
+        await entityManager.createQueryBuilder().insert().into(AdminGroup).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_admin_permissions(admin_id)
     })
   }
 
   // 获取管理员角色
-  async getAdminRoles(id) {
+  getAdminRoles(id) {
     return AdminRole.find({where: {admin_id: id}, select: ['role_id']})
   }
 
@@ -103,7 +103,7 @@ export class AdminService {
     return this.connection.transaction(async entityManager => {
       await entityManager.getRepository(AdminRole).delete({admin_id})
       if (arr.length > 0) {
-        await entityManager.createQueryBuilder().insert().into(AdminRole).values(arr).execute()
+        await entityManager.createQueryBuilder().insert().into(AdminRole).values(arr).updateEntity(false).execute()
       }
       this.commonService.clear_redis_admin_permissions(admin_id)
     })

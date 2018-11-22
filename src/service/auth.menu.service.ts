@@ -1,10 +1,10 @@
 import {Injectable} from '@nestjs/common'
-import {Menu} from '../entity/auth_menu.entity'
-import {Admin} from '../entity/auth_admin.entity'
+import {Menu} from '../entity/auth.menu.entity'
+import {Admin} from '../entity/auth.admin.entity'
 import {ErrorException, user_not_found} from '../common/exceptions/error.exception'
 
 @Injectable()
-export class MenuService {
+export class AuthMenuService {
 
   // 查询所有菜单
   getMenuAll() {

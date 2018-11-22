@@ -2,17 +2,17 @@ import {Body, Controller, Post, UseGuards} from '@nestjs/common'
 import {AuthGuard} from '../common/guard/auth.guard'
 import {success} from '../utils/result.util'
 import {Permission} from '../common/decorator/permission.decorator'
-import {idVerify, menuSortVerify} from '../verify/admin.verify'
+import {idVerify, menuSortVerify} from '../verify/auth.verify'
 import {ErrorException, param_err} from '../common/exceptions/error.exception'
 import {Resource} from '../common/decorator/resource.decorator'
-import {MenuService} from '../service/menu.service'
+import {AuthMenuService} from '../service/auth.menu.service'
 
 @Controller('menu')
 @UseGuards(AuthGuard)
 @Resource({name: '菜单管理', identify: 'manage:menu'})
-export class MenuController {
+export class AuthMenuController {
 
-  constructor(private readonly menuService: MenuService) {
+  constructor(private readonly menuService: AuthMenuService) {
   }
 
   // 查询用户所有菜单

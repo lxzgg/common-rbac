@@ -1,6 +1,6 @@
 import {BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm'
-import {Resource} from './auth_resource.entity'
-import {Role} from './auth_role.entity'
+import {Resource} from './auth.resource.entity'
+import {Role} from './auth.role.entity'
 
 @Entity('auth_permission')
 export class Permission extends BaseEntity {

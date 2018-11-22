@@ -1,10 +1,19 @@
-import {BadRequestException, HttpService, Injectable} from '@nestjs/common'
+import {HttpService, Injectable} from '@nestjs/common'
 import {WxConfig} from './wx.config'
 import {createDecipheriv, createHash} from 'crypto'
 import {Builder, Parser} from 'xml2js'
 import {stringify} from 'qs'
 import {Agent} from 'https'
 import {readFileSync} from 'fs'
+import {ErrorException, param_err} from '../../common/exceptions/error.exception'
+import {Result} from './wx.dto'
+
+export const xmlParserConfig = {
+  //不获取根节点
+  explicitRoot: false,
+  //true始终将子节点放入数组中; false则只有存在多个数组时才创建数组。
+  explicitArray: false,
+}
 
 @Injectable()
 export class WxService {
@@ -12,12 +21,8 @@ export class WxService {
   constructor(private readonly httpService: HttpService) {
   }
 
-  private readonly parser = new Parser({
-    //不获取根节点
-    explicitRoot: false,
-    //true始终将子节点放入数组中; false则只有存在多个数组时才创建数组。
-    explicitArray: false,
-  })
+
+  private readonly parser = new Parser(xmlParserConfig)
   private readonly builder = new Builder({
     //根节点名称
     rootName: 'xml',
@@ -61,23 +66,22 @@ export class WxService {
   /**
    * 小程序,公众号支付
    */
-  pay(param) {
+  pay(params) {
     // 交易类型
-    param.trade_type = 'JSAPI'
-    // 用户标识
-    param.openid = WxConfig.openid
-    return this.unifiedOrder(param).then(res => {
+    params.trade_type = 'JSAPI'
+
+    return this.unifiedOrder(params).then((res: any) => {
       // 小程序支付所需参数
-      const appletparam = {
-        appId: res['appid'],
+      const appletParams: any = {
+        appId: res.appid,
         timeStamp: Date.now().toString(),
-        nonceStr: res['nonce_str'],
-        package: `prepay_id=${res['prepay_id']}`,
+        nonceStr: res.nonce_str,
+        package: `prepay_id=${res.prepay_id}`,
         signType: 'MD5',
       }
       // 加密参数
-      appletparam['paySign'] = this.getSign(appletparam)
-      return appletparam
+      appletParams.paySign = this.getSign(appletParams)
+      return appletParams
     })
   }
 
@@ -97,7 +101,7 @@ export class WxService {
    * 查询订单
    */
   orderQuery(param) {
-    let orderParam = {
+    let orderParam: Result = {
       // 小程序ID
       appid: WxConfig.appID,
       // 商户号
@@ -116,7 +120,7 @@ export class WxService {
    * 关闭订单
    */
   closeOrder(param) {
-    let orderParam = {
+    let orderParam: Result = {
       // 小程序ID
       appid: WxConfig.appID,
       // 商户号
@@ -133,7 +137,7 @@ export class WxService {
    * 查询退款
    */
   refundQuery(param) {
-    let orderParam = {
+    let orderParam: Result = {
       // 小程序ID
       appid: WxConfig.appID,
       // 商户号
@@ -158,7 +162,7 @@ export class WxService {
    * 申请退款
    */
   refund(param) {
-    let orderParam = {
+    let orderParam: Result = {
       // 小程序ID
       appid: WxConfig.appID,
       // 商户号
@@ -187,9 +191,9 @@ export class WxService {
   /**
    * 统一下单
    */
-  private unifiedOrder(param) {
+  private unifiedOrder(params) {
     // 提交一次订单后取消不支付,那么订单号,价格,body不能修改,不一致会导致prepay_id获取不到
-    let orderParam = {
+    let orderParam: Result = {
       // 小程序ID
       appid: WxConfig.appID,
       // 商户号
@@ -197,19 +201,19 @@ export class WxService {
       // 随机字符串
       nonce_str: this.randomString(),
       // 商品描述
-      body: WxConfig.body,
+      body: params.body || WxConfig.body,
       // 订单号
-      out_trade_no: param.order_sn,
+      out_trade_no: params.order_sn,
       // 订单金额
-      total_fee: parseInt(String(param.total_fee * 100)),
+      total_fee: 1 || parseInt(String(params.total_fee * 100)),
       // 终端IP
-      spbill_create_ip: param.spbill_create_ip,
+      spbill_create_ip: params.ip,
       // 通知地址
       notify_url: WxConfig.notify_url,
       // 交易类型
-      trade_type: param.trade_type,
+      trade_type: params.trade_type,
       // 用户标识
-      openid: param.openid,
+      openid: params.openid,
     }
     return this.requestURL(this.UNIFIED_ORDER_URL, orderParam)
   }
@@ -229,16 +233,16 @@ export class WxService {
     const result = await this.httpService.post(url, xml, {httpsAgent: agent}).toPromise()
     return new Promise(resolve => {
       // 解析微信返回的xml
-      this.parser.parseString(result.data, (err, res) => {
-        if (err) throw new BadRequestException('xml解析失败')
+      this.parser.parseString(result.data, (err, res: any) => {
+        if (err) throw new ErrorException(param_err, 'xml解析失败')
         // 判断请求是否成功
-        if (res['result_code'] !== 'SUCCESS') throw new BadRequestException(res.err_code_des || res.return_msg)
+        if (res.result_code !== 'SUCCESS') throw new ErrorException(param_err, res.err_code_des || res.return_msg)
         // 获取返回签名
-        const sign = res['sign']
+        const sign = res.sign
         // 返回参数签名时过滤sign参数
-        res['sign'] = undefined
+        res.sign = undefined
         // 返回参数签名并比对
-        if (this.getSign(res) !== sign) throw new BadRequestException('签名不一致')
+        if (this.getSign(res) !== sign) throw new ErrorException(param_err, '签名不一致')
         resolve(res)
       })
     })
@@ -248,7 +252,7 @@ export class WxService {
    * 参数签名
    * @param orderParam 统一下单参数
    */
-  private getSign(orderParam) {
+  getSign(orderParam) {
     const signParam = {}
     for (const key of Object.keys(orderParam).sort()) {
       // 过滤空值,不参与签名
@@ -262,8 +266,22 @@ export class WxService {
    * 生成随机字符串
    * @param stringLength 返回的字符串长度,默认32
    */
-  private randomString(stringLength = 32) {
+  randomString(stringLength = 32) {
     const encodeChars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    const charsLength = encodeChars.length
+    let randomString = ''
+    for (let i = 0; i < stringLength; i++) {
+      randomString += encodeChars.charAt(Math.floor(Math.random() * charsLength))
+    }
+    return randomString
+  }
+
+  /**
+   * 生成随机数字
+   * @param stringLength 返回的字符串长度,默认32
+   */
+  randomNumber(stringLength = 32) {
+    const encodeChars = '0123456789'
     const charsLength = encodeChars.length
     let randomString = ''
     for (let i = 0; i < stringLength; i++) {

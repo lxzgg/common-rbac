@@ -8,11 +8,9 @@ export const WxConfig = {
   // 商户密钥
   mch_key: '',
   // 通知地址
-  notify_url: 'http://127.0.0.1',
+  notify_url: '',
   // 商品描述
   body: '',
   // WAP网站名
   wap_name: '',
-  // 测试用openid
-  openid: '',
 }

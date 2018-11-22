@@ -2,17 +2,17 @@ import {Body, Controller, Post, UseGuards} from '@nestjs/common'
 import {AuthGuard} from '../common/guard/auth.guard'
 import {success} from '../utils/result.util'
 import {Permission} from '../common/decorator/permission.decorator'
-import {addNameVerify, groupRolesVerify, idVerify, pageVerify, updateNameVerify} from '../verify/admin.verify'
+import {addNameVerify, groupRolesVerify, idVerify, pageVerify, updateNameVerify} from '../verify/auth.verify'
 import {ErrorException, param_err} from '../common/exceptions/error.exception'
 import {Resource} from '../common/decorator/resource.decorator'
-import {GroupService} from '../service/group.service'
+import {AuthGroupService} from '../service/auth.group.service'
 
 @Controller('Group')
 @UseGuards(AuthGuard)
 @Resource({name: '组织管理', identify: 'manage:Group'})
-export class GroupController {
+export class AuthGroupController {
 
-  constructor(private readonly groupService: GroupService) {
+  constructor(private readonly groupService: AuthGroupService) {
   }
 
   // 查询所有组织

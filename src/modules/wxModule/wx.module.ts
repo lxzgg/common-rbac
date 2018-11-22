@@ -1,6 +1,6 @@
 import {HttpModule, Module} from '@nestjs/common'
-import {WxController} from './wx.controller'
 import {WxService} from './wx.service'
+import {WxController} from './wx.controller'
 
 /**
  * 微信支付模块
@@ -9,6 +9,7 @@ import {WxService} from './wx.service'
   imports: [HttpModule],
   controllers: [WxController],
   providers: [WxService],
+  exports: [WxService],
 })
 export class WxModule {
 }

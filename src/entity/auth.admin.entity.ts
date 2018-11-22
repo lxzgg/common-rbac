@@ -10,9 +10,9 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm'
-import {Role} from './auth_role.entity'
+import {Role} from './auth.role.entity'
 import {DateFormat} from '../utils/date.util'
-import {Group} from './auth_group.entity'
+import {Group} from './auth.group.entity'
 
 @Entity('auth_admin')
 export class Admin extends BaseEntity {

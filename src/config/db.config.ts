@@ -1,5 +1,16 @@
 import * as Redis from 'ioredis'
 import {TypeOrmModuleOptions} from '@nestjs/typeorm'
+import {Admin} from '../entity/auth.admin.entity'
+import {AdminGroup} from '../entity/auth.admin_group.entity'
+import {AdminRole} from '../entity/auth.admin_role.entity'
+import {Group} from '../entity/auth.group.entity'
+import {GroupRole} from '../entity/auth.group_role.entity'
+import {Role} from '../entity/auth.role.entity'
+import {RoleMenu} from '../entity/auth.role_menu.entity'
+import {Menu} from '../entity/auth.menu.entity'
+import {RolePermission} from '../entity/auth.role_permission.entity'
+import {Permission} from '../entity/auth.permission.entity'
+import {Resource} from '../entity/auth.resource.entity'
 
 const redisConfig = {
   host: '127.0.0.1',
@@ -16,10 +27,7 @@ export const DBConfig: TypeOrmModuleOptions = {
   username: 'root',
   password: 'sa',
   database: 'battery',
-  entities: [
-    '*/entity/**.entity{.ts,.js}',
-    'entity/**.entity{.ts,.js}',
-  ],
+  entities: [Admin, AdminGroup, AdminRole, Group, GroupRole, Menu, Permission, Resource, Role, RoleMenu, RolePermission],
   // cache: {type: 'redis', options: redisConfig, duration: 60000},
   // 每次建立连接时删除架构
   dropSchema: true,

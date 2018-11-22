@@ -10,17 +10,17 @@ import {
   roleAddMenuVerify,
   roleIdVerify,
   updateNameVerify,
-} from '../verify/admin.verify'
+} from '../verify/auth.verify'
 import {ErrorException, param_err} from '../common/exceptions/error.exception'
 import {success} from '../utils/result.util'
-import {RoleService} from '../service/role.service'
+import {AuthRoleService} from '../service/auth.role.service'
 
 @Controller('role')
 @UseGuards(AuthGuard)
 @Resource({name: '角色管理', identify: 'manage:role'})
-export class RoleController {
+export class AuthRoleController {
 
-  constructor(private readonly roleService: RoleService) {
+  constructor(private readonly roleService: AuthRoleService) {
   }
 
   // 查询所有权限

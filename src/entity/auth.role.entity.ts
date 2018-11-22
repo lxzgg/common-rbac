@@ -8,34 +8,32 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import {Role} from './auth_role.entity'
+import {Permission} from './auth.permission.entity'
 import {DateFormat} from '../utils/date.util'
-import {Admin} from './auth_admin.entity'
+import {Admin} from './auth.admin.entity'
+import {Menu} from './auth.menu.entity'
+import {Group} from './auth.group.entity'
 
-@Entity('auth_group')
-export class Group extends BaseEntity {
-
+@Entity('auth_role')
+export class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({length: 50, default: '', comment: '组织名称'})
+  @Column({length: 50, default: '', comment: '角色名'})
   name: string
 
-  @ManyToMany(() => Admin, admin => admin.groups)
-  @JoinTable({
-    name: 'auth_admin_group',
-    joinColumn: {name: 'group_id'},
-    inverseJoinColumn: {name: 'admin_id'},
-  })
+  @ManyToMany(() => Admin, admin => admin.roles)
   admins: Admin[]
 
-  @ManyToMany(() => Role, role => role.groups)
-  @JoinTable({
-    name: 'auth_group_role',
-    joinColumn: {name: 'group_id'},
-    inverseJoinColumn: {name: 'role_id'},
-  })
-  roles: Role[]
+  @ManyToMany(() => Menu)
+  @JoinTable({name: 'auth_role_menu', joinColumn: {name: 'role_id'}, inverseJoinColumn: {name: 'menu_id'}})
+  menus: Menu[]
+
+  @ManyToMany(() => Permission, permission => permission.roles)
+  permissions: Permission[]
+
+  @ManyToMany(() => Group, group => group.roles)
+  groups: Group[]
 
   @CreateDateColumn({
     select: false, comment: '创建时间', transformer: {
@@ -52,5 +50,4 @@ export class Group extends BaseEntity {
     },
   })
   updatedAt: Date
-
 }

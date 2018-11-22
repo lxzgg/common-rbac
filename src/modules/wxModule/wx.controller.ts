@@ -1,14 +1,17 @@
-import {Body, Controller, Post, Req} from '@nestjs/common'
+import {Body, Controller, Header, HttpCode, Post, Req} from '@nestjs/common'
 import {WxService} from './wx.service'
 import {closeOrderVerify, getOrderVerify, payVerify, refundQueryVerify, refundVerify} from './wx.verify'
 import {ErrorException, param_err} from '../../common/exceptions/error.exception'
-
+import {Result} from './wx.dto'
 
 @Controller('wx')
 export class WxController {
 
   constructor(private readonly wxPayService: WxService) {
   }
+
+  private readonly SUCCESS = '<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>'
+  private readonly FAIL = '<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[签名验证失败]]></return_msg></xml>'
 
   // 小程序,公众号支付
   @Post('pay')
@@ -60,9 +63,20 @@ export class WxController {
 
   // 支付成功回调
   @Post('pay_notify')
-  pay_notify(@Body() body) {
-    console.log(body)
-    return '<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>'
+  @HttpCode(200)
+  @Header('Content-Type', 'text/xml')
+  async pay_notify(@Req() req, @Body() body: Result) {
+    if (body.result_code !== 'SUCCESS') return this.FAIL
+    const sign = body.sign
+    // 参数签名时过滤sign参数
+    body.sign = undefined
+    if (this.wxPayService.getSign(body) !== sign) return this.FAIL
+
+    // 支付成功逻辑处理
+    // .....
+    // .....
+
+    return this.SUCCESS
   }
 
 }
