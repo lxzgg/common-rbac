@@ -2,7 +2,7 @@ import {HttpModule, Module, OnModuleInit} from '@nestjs/common'
 import {TypeOrmModule} from '@nestjs/typeorm'
 import {AuthLoginController} from './controller/auth.login.controller'
 import {AuthLoginService} from './service/auth.login.service'
-import {DBConfig} from './config/db.config'
+import {DBConfig, jwtConfig} from './config/db.config'
 import {Admin} from './entity/auth.admin.entity'
 import {WxModule} from './modules/wxModule/wx.module'
 import {Resource} from './entity/auth.resource.entity'
@@ -35,10 +35,7 @@ import {AuthAdminService} from './service/auth.admin.service'
 
 @Module({
   imports: [
-    JwtModule.register({
-      secretOrPrivateKey: 'a59236fc3471490181556c294f41b48c',
-      signOptions: {expiresIn: 3600},
-    }),
+    JwtModule.register(jwtConfig),
     TypeOrmModule.forRoot(DBConfig),
     HttpModule,
     WxModule,
@@ -61,10 +58,10 @@ import {AuthAdminService} from './service/auth.admin.service'
     },
     AuthAdminService,
     AuthGroupService,
-    CommonService,
     AuthLoginService,
     AuthMenuService,
     AuthRoleService,
+    CommonService,
   ],
 })
 

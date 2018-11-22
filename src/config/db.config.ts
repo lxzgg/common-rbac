@@ -12,6 +12,11 @@ import {RolePermission} from '../entity/auth.role_permission.entity'
 import {Permission} from '../entity/auth.permission.entity'
 import {Resource} from '../entity/auth.resource.entity'
 
+export const jwtConfig = {
+  secretOrPrivateKey: 'a59236fc3471490181556c294f41b48c',
+  signOptions: {expiresIn: 3600},
+}
+
 const redisConfig = {
   host: '127.0.0.1',
   port: 6379,
